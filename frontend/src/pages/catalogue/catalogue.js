@@ -2,7 +2,9 @@ import React from 'react'
 
 function Catalogue () {
   return (
-    <h1>Catalogue of movies</h1>
+    <>
+      <h1>Catalogo</h1>
+    </>
   )
 }
 
