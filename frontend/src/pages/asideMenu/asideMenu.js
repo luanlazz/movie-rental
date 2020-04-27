@@ -11,8 +11,11 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import CloudIcon from '@material-ui/icons/Cloud'
 import UserPhotoImg from 'images/user-photo.jpg'
 import { HOME, SUBSCRIPTIONS } from 'routes'
+import { useAuth } from 'hooks'
 
 function AsideMenu () {
+  const { logout } = useAuth()
+
   return (
     <SideMenuBar>
 
@@ -29,11 +32,11 @@ function AsideMenu () {
             <Typography>Olá, Maria</Typography>
             <AccountCircle />
             <CloudIcon />
-            <ExitToAppIcon />
+            <ExitToAppIcon onClick={logout} />
           </UserActions>
         </AccountContainer>
 
-        <ActionsContainer>
+        <MenuLinksContainer>
 
           <LinkMenu to={HOME}>
             Catalogo
@@ -43,7 +46,7 @@ function AsideMenu () {
             Assinaturas
           </LinkMenu>
 
-        </ActionsContainer>
+        </MenuLinksContainer>
 
       </GridContainer>
     </SideMenuBar>
@@ -82,6 +85,7 @@ const AccountContainer = styled(Grid).attrs({
   container: true
 })`
   && {
+    color: ${({ theme }) => theme.palette.common.white};
     display: flex;
   }
 `
@@ -114,7 +118,7 @@ const UserActions = styled(Grid).attrs({
   }
 `
 
-const ActionsContainer = styled(Grid).attrs({
+const MenuLinksContainer = styled(Grid).attrs({
   container: true
 })`
   && {
@@ -126,13 +130,13 @@ const ActionsContainer = styled(Grid).attrs({
 
 function LinkMenu ({ children, ...props }) {
   return (
-    <GridItemMenu>
-      <Link {...props}>
+    <Link {...props}>
+      <Grid item>
         <Typography variant='h5'>
           {children}
         </Typography>
-      </Link>
-    </GridItemMenu>
+      </Grid>
+    </Link>
   )
 }
 
@@ -143,22 +147,13 @@ LinkMenu.propTypes = {
 const Link = styled(MaterialLink)`
   && {
     color: ${({ theme }) => theme.palette.common.white};
-    justify-content: center;
+    margin: auto;
     text-align: center;
     text-decoration: none;
-  }
-`
-
-const GridItemMenu = styled(Grid).attrs({
-  item: true
-})`
-  && {
-    height: 3rem;
     width: 100%;
 
     :hover {
       background-color: ${({ theme }) => theme.palette.secondary.light};
-      color: ${({ theme }) => theme.palette.common.black};
     }
   }
 `

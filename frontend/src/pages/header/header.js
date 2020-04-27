@@ -4,11 +4,11 @@ import styled from 'styled-components'
 import {
   AppBar,
   Toolbar as MaterialToolbar,
-  IconButton
+  IconButton as MaterialIconButton
 } from '@material-ui/core'
 import MenuIcon from '@material-ui/icons/Menu'
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart'
-import Logo from './logo'
+import { Logo } from 'ui'
 import { Link } from 'react-router-dom'
 import { HOME } from 'routes'
 
@@ -17,17 +17,15 @@ function Header ({ handleAsideMenu }) {
     <AppBar position='static'>
       <Toolbar>
         <IconButton onClick={handleAsideMenu}>
-          <MenuIcon
-            fontSize='inherit'
-          />
+          <MenuIcon />
         </IconButton>
 
         <Link to={HOME}>
           <Logo />
         </Link>
 
-        <IconButton edge='end'>
-          <ShoppingCartIcon fontSize='inherit' />
+        <IconButton>
+          <ShoppingCartIcon />
         </IconButton>
       </Toolbar>
     </AppBar>
@@ -40,9 +38,14 @@ Header.propTypes = {
 
 const Toolbar = styled(MaterialToolbar)`
   && {
+    border-bottom: 0.2rem solid rgba(194,3,3,1);
     display: flex;
     justify-content: space-between;
   }
+`
+
+const IconButton = styled(MaterialIconButton)`
+  color: ${({ theme }) => theme.palette.common.white};
 `
 
 export default Header
