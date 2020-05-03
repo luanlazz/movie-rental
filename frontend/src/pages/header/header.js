@@ -12,11 +12,11 @@ import { Logo } from 'ui'
 import { Link } from 'react-router-dom'
 import { HOME } from 'routes'
 
-function Header ({ handleAsideMenu }) {
+function Header ({ handleDrawerOpen }) {
   return (
     <AppBar position='static'>
       <Toolbar>
-        <IconButton onClick={handleAsideMenu}>
+        <IconButton onClick={handleDrawerOpen}>
           <MenuIcon />
         </IconButton>
 
@@ -33,7 +33,7 @@ function Header ({ handleAsideMenu }) {
 }
 
 Header.propTypes = {
-  handleAsideMenu: t.func
+  handleDrawerOpen: t.func
 }
 
 const Toolbar = styled(MaterialToolbar)`

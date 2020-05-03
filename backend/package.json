@@ -4,22 +4,22 @@
   "main": "./src/index.js",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon"
+    "dev": "nodemon"
   },
   "author": "Luan Lazzari",
   "dependencies": {
-    "bcryptjs": "^2.4.3",
-    "consign": "^0.1.6",
-    "core-js": "^3.6.1",
-    "cors": "^2.8.5",
-    "express": "^4.17.1",
-    "jsonwebtoken": "^8.5.1",
-    "knex": "^0.20.6",
-    "passport": "^0.4.1",
-    "passport-jwt": "^4.0.0",
-    "pg": "^7.17.0"
+    "bcryptjs": "2.4.3",
+    "consign": "0.1.6",
+    "core-js": "3.6.1",
+    "cors": "2.8.5",
+    "express": "4.17.1",
+    "jsonwebtoken": "8.5.1",
+    "knex": "0.20.6",
+    "passport": "0.4.1",
+    "passport-jwt": "4.0.0",
+    "pg": "7.17.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.2"
+    "nodemon": "2.0.2"
   }
 }

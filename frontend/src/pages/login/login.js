@@ -19,7 +19,11 @@ function Login () {
     email: '',
     password: ''
   })
-  const { userInfo, login, errorMessage, fetchingUser } = useAuth()
+  const { login, errorMessage, fetchingUser, validatingToken } = useAuth()
+
+  if (validatingToken) {
+    return <Redirect to={HOME} />
+  }
 
   function handleFieldChange (e) {
     setUser({
@@ -28,12 +32,8 @@ function Login () {
     })
   }
 
-  function onSubmit () {
-    login(user)
-  }
-
-  if (userInfo.isUserLoggedIn) {
-    return <Redirect to={HOME} />
+  const onSubmit = async () => {
+    await login(user)
   }
 
   return (

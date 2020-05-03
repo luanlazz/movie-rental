@@ -16,18 +16,18 @@ import { HOME } from 'routes'
 const Catalogue = React.lazy(() => import('pages/catalogue'))
 
 function Main () {
-  const [asideMenu, setAsideMenu] = useState(true)
+  const [drawerOpen, setDrawerOpen] = useState(true)
 
-  function handleAsideMenu (e) {
-    setAsideMenu(!asideMenu)
+  function handleDrawerOpen () {
+    setDrawerOpen(!drawerOpen)
   }
 
   return (
     <>
-      <Header handleAsideMenu={handleAsideMenu} />
+      <Header handleDrawerOpen={handleDrawerOpen} />
 
       <GridContainer>
-        {!!asideMenu && <AsideMenu />}
+        {drawerOpen && <AsideMenu open={drawerOpen} />}
 
         <Spacer />
 
@@ -55,7 +55,7 @@ const GridContainer = styled(Grid).attrs({
 })`
   && {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     flex-grow: 1;
   }
 `

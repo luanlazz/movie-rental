@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react'
+import React, { Suspense, useEffect } from 'react'
 import t from 'prop-types'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import { LinearProgress } from '@material-ui/core'
@@ -9,13 +9,22 @@ const Main = React.lazy(() => import('pages/main'))
 const Login = React.lazy(() => import('pages/login'))
 
 function App ({ location }) {
-  const { userInfo } = useAuth()
+  const { validateToken, validatingToken } = useAuth()
 
-  if (userInfo.isUserLoggedIn && location.pathname === LOGIN) {
+  useEffect(() => {
+    const validateUser = async () => {
+      await validateToken()
+    }
+
+    validateUser()
+    console.log('token: ', validatingToken)
+  }, [])
+
+  if (validatingToken && location.pathname === LOGIN) {
     return <Redirect to={HOME} />
   }
 
-  if (!userInfo.isUserLoggedIn && location.pathname !== LOGIN) {
+  if (!validatingToken && location.pathname !== LOGIN) {
     return <Redirect to={LOGIN} />
   }
 

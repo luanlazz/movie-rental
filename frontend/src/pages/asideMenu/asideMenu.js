@@ -13,7 +13,7 @@ import UserPhotoImg from 'images/user-photo.jpg'
 import { HOME, SUBSCRIPTIONS } from 'routes'
 import { useAuth } from 'hooks'
 
-function AsideMenu () {
+function AsideMenu ({ open }) {
   const { logout } = useAuth()
 
   return (
@@ -49,17 +49,24 @@ function AsideMenu () {
         </MenuLinksContainer>
 
       </GridContainer>
+
     </SideMenuBar>
   )
 }
 
-const SideMenuBar = styled.aside`
-&& {
-  display: flex;
-  flex-direction: column;
-  width: 220px;
-  background-color:  ${({ theme }) => theme.palette.primary.light};
+AsideMenu.propTypes = {
+  open: t.bool.isRequired
 }
+
+const SideMenuBar = styled.aside`
+  && {
+    background-color:  ${({ theme }) => theme.palette.primary.light};
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    max-width: 220px;
+    min-height: 100%;
+  }
 `
 
 const Spacer = styled.div`
@@ -73,7 +80,6 @@ const GridContainer = styled(Grid).attrs({
   container: true,
   spacing: 2
 })`
-  align-items: center;
   display: flex;
   flex: 1;
   flex-direction: column;
