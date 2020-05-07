@@ -5,7 +5,9 @@ import {
   Typography,
   LinearProgress
 } from '@material-ui/core'
-import { H3 } from 'ui'
+import {
+  HeaderContent
+} from 'ui'
 import filmPoster from 'images/ford-vs-ferrari.jpg'
 import StarIcon from '@material-ui/icons/Star'
 import { useMovie } from 'hooks'
@@ -14,17 +16,14 @@ function Catalogue () {
   const { movies, getMovies, fetchingMovie } = useMovie()
 
   useEffect(() => {
+    console.log('getting movies')
     getMovies()
   }, [])
 
   return (
     <>
       <Content>
-        <HeaderPage>
-          <Grid item xs={12}>
-            <H3>Catalogo de filmes :-)</H3>
-          </Grid>
-        </HeaderPage>
+        <HeaderContent title='Catalogo de filmes :-)' />
 
         {fetchingMovie && <LinearProgress />}
 
@@ -75,20 +74,11 @@ const Content = styled(Grid).attrs({
 })`
 `
 
-const HeaderPage = styled(Grid).attrs({
-  container: true
-})`
-  && {
-    display: block;
-    margin: auto;
-  }
-`
-
 const CatalogueContainer = styled(Grid).attrs({
   container: true
 })`
   && {
-
+    justify-content: space-evenly;
     padding: ${({ theme }) => theme.spacing(2)}px;
   }
 `
@@ -99,6 +89,7 @@ const FilmContainer = styled(Grid).attrs({
 })`
   && {
     box-shadow: 7px 6px 21px -1px rgba(0,0,0,0.52);
+    border-radius: 5px;
     display: inline-block;
     flex-direction: column;
     margin: ${({ theme }) => theme.spacing(1)}px;
@@ -142,7 +133,9 @@ const Top = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(2)}px;
 `
 
-const FilmTitle = styled(Typography)`
+const FilmTitle = styled(Typography).attrs({
+  noWrap: true
+})`
   && {
     font-size: 1.7rem;
     max-height: 35px;

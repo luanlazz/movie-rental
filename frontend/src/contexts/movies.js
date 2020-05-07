@@ -11,6 +11,7 @@ function MovieProvider ({ children }) {
 
   async function getMovies () {
     setFetchingMovie(true)
+
     const docs = []
 
     try {
@@ -28,7 +29,7 @@ function MovieProvider ({ children }) {
 
       setMovies(docs)
     } catch (error) {
-      console.error('Erro: ', error)
+      console.error('Error: ', error)
     }
 
     setFetchingMovie(false)

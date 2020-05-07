@@ -1,3 +1,6 @@
 export const HOME = '/'
 export const LOGIN = '/login'
 export const SUBSCRIPTIONS = '/subscriptions'
+export const INVENTARY = '/inventary'
+export const MANAGER = '/manager'
+export const PERFIL = '/perfil'

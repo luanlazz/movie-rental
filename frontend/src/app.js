@@ -12,12 +12,12 @@ function App ({ location }) {
   const { validateToken, validatingToken } = useAuth()
 
   useEffect(() => {
+    console.log('validando token')
     const validateUser = async () => {
       await validateToken()
     }
 
     validateUser()
-    console.log('token: ', validatingToken)
   }, [])
 
   if (validatingToken && location.pathname === LOGIN) {

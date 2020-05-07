@@ -1,20 +1,27 @@
-import React from 'react'
+import React, { useState } from 'react'
 import t from 'prop-types'
 import styled from 'styled-components'
-import { Link as MaterialLink } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import {
+  Avatar as MaterialAvatar,
   Grid,
-  Typography
+  Typography,
+  IconButton as MaterialIconButton
 } from '@material-ui/core'
 import { AccountCircle } from '@material-ui/icons'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
-import CloudIcon from '@material-ui/icons/Cloud'
+import SettingsIcon from '@material-ui/icons/Settings'
 import UserPhotoImg from 'images/user-photo.jpg'
-import { HOME, SUBSCRIPTIONS } from 'routes'
+import { HOME, SUBSCRIPTIONS, INVENTARY, MANAGER, PERFIL } from 'routes'
 import { useAuth } from 'hooks'
 
 function AsideMenu ({ open }) {
-  const { logout } = useAuth()
+  const { userInfo, logout } = useAuth()
+  const [currentPage, setCurrentPage] = useState(null)
+
+  function handleCurrentPage (value) {
+    setCurrentPage(value)
+  }
 
   return (
     <SideMenuBar>
@@ -24,28 +31,79 @@ function AsideMenu ({ open }) {
       <GridContainer>
 
         <AccountContainer>
-          <UserPhoto>
-            <img src={UserPhotoImg} alt='User profile' />
-          </UserPhoto>
+          <Avatar src={UserPhotoImg} alt='User profile' />
 
-          <UserActions>
-            <Typography>Olá, Maria</Typography>
-            <AccountCircle />
-            <CloudIcon />
-            <ExitToAppIcon onClick={logout} />
-          </UserActions>
+          <UserInfoAndActions>
+            <UserName>
+              <Typography align='left' variant='h5'>
+                Olá, {userInfo.name}
+              </Typography>
+            </UserName>
+
+            <Grid item>
+              {[
+                {
+                  value: 'account',
+                  component: Link,
+                  to: PERFIL,
+                  children: <AccountCircle fontSize='small' />
+                },
+                {
+                  value: 'manager',
+                  component: Link,
+                  to: MANAGER,
+                  children: <SettingsIcon fontSize='small' />
+                },
+                {
+                  value: 'exit',
+                  onClick: logout,
+                  children: <ExitToAppIcon fontSize='small' />
+                }
+              ].map((button) => (
+                <IconButton
+                  {...button}
+                  key={button.value}
+                  selected={(currentPage === button.value).toString()}
+                  onClick={() => {
+                    handleCurrentPage(button.value)
+                  }}
+                >
+                  {button.children}
+                </IconButton>
+              ))}
+            </Grid>
+          </UserInfoAndActions>
         </AccountContainer>
 
         <MenuLinksContainer>
-
-          <LinkMenu to={HOME}>
-            Catalogo
-          </LinkMenu>
-
-          <LinkMenu to={SUBSCRIPTIONS}>
-            Assinaturas
-          </LinkMenu>
-
+          {[
+            {
+              value: 'shop',
+              to: HOME,
+              children: 'Loja'
+            },
+            {
+              value: 'inventary',
+              to: INVENTARY,
+              children: 'Meus filmes'
+            },
+            {
+              value: 'subscriptions',
+              to: SUBSCRIPTIONS,
+              children: 'Assinaturas'
+            }
+          ].map((component) => (
+            <LinkMenu
+              {...component}
+              key={component.value}
+              selected={(currentPage === component.value).toString()}
+              onClick={() => {
+                handleCurrentPage(component.value)
+              }}
+            >
+              {component.children}
+            </LinkMenu>
+          ))}
         </MenuLinksContainer>
 
       </GridContainer>
@@ -60,11 +118,11 @@ AsideMenu.propTypes = {
 
 const SideMenuBar = styled.aside`
   && {
-    background-color:  ${({ theme }) => theme.palette.primary.light};
+    background-color: ${({ theme }) => theme.palette.primary.light};
     display: flex;
     flex-direction: column;
     margin: 0;
-    max-width: 220px;
+    width: 300px;
     min-height: 100%;
   }
 `
@@ -92,35 +150,45 @@ const AccountContainer = styled(Grid).attrs({
 })`
   && {
     color: ${({ theme }) => theme.palette.common.white};
-    display: flex;
+    display: inline-flex;
+    flex-wrap: nowrap;
   }
 `
 
-const UserPhoto = styled(Grid).attrs({
-  item: true
-})`
+const Avatar = styled(MaterialAvatar)`
   && {
-    align-itens: center;
-    display: flex;
-    flex-direction: column;
-    height: 5rem;
+    height: 80px;
+    width: 80px;
     margin-left: 1rem;
-    overflow: hidden;
-    width: 5rem;
-  }
-
-  img {
-    border-radius: 50%;
-    max-height: 100%;
   }
 `
 
-const UserActions = styled(Grid).attrs({
-  item: true
+const UserInfoAndActions = styled(Grid).attrs({
+  container: true
 })`
   && {
     display: block;
-    margin: auto auto auto 5px;
+  }
+`
+
+const UserName = styled(Grid).attrs({
+  item: true
+})`
+  && {
+    margin-left: ${({ theme }) => theme.spacing(1)}px;
+  }
+`
+
+const IconButton = styled(MaterialIconButton)`
+  && {
+    color: ${({ selected, theme }) => (selected === 'true'
+      ? theme.palette.secondary.light
+      : theme.palette.common.white
+    )};
+
+    :hover {
+      color: ${({ theme }) => theme.palette.secondary.light};
+    }
   }
 `
 
@@ -136,13 +204,13 @@ const MenuLinksContainer = styled(Grid).attrs({
 
 function LinkMenu ({ children, ...props }) {
   return (
-    <Link {...props}>
+    <LinkItem {...props}>
       <Grid item>
         <Typography variant='h5'>
           {children}
         </Typography>
       </Grid>
-    </Link>
+    </LinkItem>
   )
 }
 
@@ -150,16 +218,19 @@ LinkMenu.propTypes = {
   children: t.node
 }
 
-const Link = styled(MaterialLink)`
+const LinkItem = styled(Link)`
   && {
-    color: ${({ theme }) => theme.palette.common.white};
+    color: ${({ selected, theme }) => (selected === 'true'
+      ? theme.palette.secondary.light
+      : theme.palette.common.white
+    )};
     margin: auto;
     text-align: center;
     text-decoration: none;
     width: 100%;
 
     :hover {
-      background-color: ${({ theme }) => theme.palette.secondary.light};
+      color: ${({ theme }) => theme.palette.secondary.light};
     }
   }
 `
