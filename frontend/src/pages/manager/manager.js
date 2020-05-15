@@ -7,7 +7,6 @@ import {
   Grid,
   Tab,
   Tabs,
-  Typography,
   Table,
   TableBody,
   TableRow,
@@ -19,16 +18,16 @@ import {
   LinearProgress
 } from '@material-ui/core'
 import {
-  HeaderContent
+  ContentTitle,
+  H3
 } from 'ui'
 import EditIcon from '@material-ui/icons/Edit'
 import DeleteIcon from '@material-ui/icons/Delete'
 import { useUsers } from 'hooks'
+import UserMaintance from './user-maintance'
 
-import PhoneIcon from '@material-ui/icons/Phone'
 import FavoriteIcon from '@material-ui/icons/Favorite'
 import PersonPinIcon from '@material-ui/icons/PersonPin'
-import HelpIcon from '@material-ui/icons/Help'
 
 function TabPanel (props) {
   const { children, value, index, ...other } = props
@@ -43,7 +42,7 @@ function TabPanel (props) {
     >
       {value === index && (
         <Box p={3}>
-          <Typography>{children}</Typography>
+          {children}
         </Box>
       )}
     </div>
@@ -64,101 +63,137 @@ function a11yProps (index) {
 }
 
 function Manager () {
-  const { users, getUsers, fetchingUsers } = useUsers()
+  const { users, getUsers, getUser, fetchingUsers, saveUser } = useUsers()
   const [value, setValue] = useState(0)
+  const [openUserModal, setOpenUserModal] = React.useState(false)
 
   useEffect(() => {
     console.log('getting users')
-    getUsers()
+
+    const gettingUsers = () => {
+      getUsers()
+    }
+
+    gettingUsers()
   }, [])
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue)
-  }
+  async function handleUpdate (userId) {
+    await getUser(userId)
 
-  function handleUpdate (userId) {
-    console.log('change user', userId)
+    handleOpenUserModal()
   }
 
   function handleDelete (userId) {
     console.log('delete user', userId)
   }
 
+  async function handleSaveUser () {
+    await saveUser()
+  }
+
+  const handleOpenUserModal = () => {
+    setOpenUserModal(true)
+  }
+
+  const handleCloseUserModal = () => {
+    setOpenUserModal(false)
+  }
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue)
+  }
+
   return (
-    <Content>
-      <HeaderContent title='Painel de Gerenciamento' />
+    <>
+      <Content>
+        <ContentTitle title='Painel de Gerenciamento' />
 
-      <ManagerContainer>
-        <AppBar position='static' color='default'>
-          <Tabs
-            value={value}
-            onChange={handleChange}
-            variant='scrollable'
-            scrollButtons='on'
-            indicatorColor='primary'
-            textColor='primary'
-            aria-label='scrollable force tabs example'
-          >
-            <Tab label='Usuários' icon={<PhoneIcon />} {...a11yProps(0)} />
-            <Tab label='Item Two' icon={<FavoriteIcon />} {...a11yProps(1)} />
-            <Tab label='Item Three' icon={<PersonPinIcon />} {...a11yProps(2)} />
-            <Tab label='Item Four' icon={<HelpIcon />} {...a11yProps(3)} />
-          </Tabs>
-        </AppBar>
+        <UserMaintance
+          handleCloseUserModal={handleCloseUserModal}
+          openUserModal={openUserModal}
+          handleSaveUser={handleSaveUser}
+        />
 
-        <TabPanel value={value} index={0}>
+        <ManagerContainer>
+          <AppBar position='static' color='inherit'>
+            <Tabs
+              value={value}
+              onChange={handleChange}
+              variant='standard'
+              scrollButtons='on'
+              indicatorColor='primary'
+              textColor='primary'
+              aria-label='scrollable force tabs'
+            >
+              <Tab label='Usuários' icon={<PersonPinIcon />} {...a11yProps(0)} />
+              <Tab label='Filmes' icon={<FavoriteIcon />} {...a11yProps(1)} />
+              <Tab label='Categorias' icon={<PersonPinIcon />} {...a11yProps(2)} />
+            </Tabs>
+          </AppBar>
 
-          {fetchingUsers && <LinearProgress />}
+          <TabPanel value={value} index={0}>
 
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Id</TableCell>
-                  <TableCell>Name</TableCell>
-                  <TableCell>E-mail</TableCell>
-                  <TableCell>Ações</TableCell>
-                </TableRow>
-              </TableHead>
+            {fetchingUsers && <LinearProgress />}
 
-              <TableBody>
-                {users.map(user => (
-                  <TableRow key={user.userId}>
-                    <TableCell>{user.userId}</TableCell>
-                    <TableCell>{user.name}</TableCell>
-                    <TableCell>l{user.email}</TableCell>
-                    <TableCell>
-                      <IconButton
-                        onClick={() => { handleUpdate(user.userId) }}
-                      >
-                        <EditIcon />
-                      </IconButton>
-
-                      <IconButton
-                        onClick={() => { handleDelete(user.userId) }}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </TableCell>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Id</TableCell>
+                    <TableCell>Name</TableCell>
+                    <TableCell>E-mail</TableCell>
+                    <TableCell>Ações</TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </TabPanel>
+                </TableHead>
 
-        <TabPanel value={value} index={1}>
-          Item Two
-        </TabPanel>
-        <TabPanel value={value} index={2}>
-          Item Three
-        </TabPanel>
-        <TabPanel value={value} index={3}>
-          Item Four
-        </TabPanel>
-      </ManagerContainer>
-    </Content>
+                <TableBody>
+                  {users.map(user => (
+                    <TableRow key={user.userId}>
+                      <TableCell>{user.userId}</TableCell>
+                      <TableCell>{user.name}</TableCell>
+                      <TableCell>{user.email}</TableCell>
+                      <TableCell>
+                        <IconButton onClick={() => { handleUpdate(user.userId) }}>
+                          <EditIcon />
+                        </IconButton>
+
+                        <IconButton onClick={() => { handleDelete(user.userId) }}>
+                          <DeleteIcon />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </TabPanel>
+
+          <TabPanel value={value} index={1}>
+            <Grid container>
+              <H3>teste</H3>
+            </Grid>
+
+          </TabPanel>
+          <TabPanel value={value} index={2}>
+            <Grid container>
+              <H3>teste</H3>
+            </Grid>
+
+          </TabPanel>
+          <TabPanel value={value} index={3}>
+            <Grid container>
+              <H3>teste</H3>
+            </Grid>
+
+          </TabPanel>
+        </ManagerContainer>
+      </Content>
+    </>
   )
+}
+
+Manager.propTypes = {
+  theme: t.object
 }
 
 const Content = styled(Grid).attrs({

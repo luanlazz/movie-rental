@@ -1,39 +1,54 @@
-import React, { useState } from 'react'
+import React from 'react'
 import t from 'prop-types'
 import styled from 'styled-components'
-import { Redirect } from 'react-router-dom'
 import {
-  Paper,
+  AppBar,
+  Box,
   Grid,
-  TextField as MaterialTextField,
-  Button,
-  CircularProgress
+  Paper,
+  Tabs,
+  Tab
 } from '@material-ui/core'
-import Alert from '@material-ui/lab/Alert'
 import { Logo } from 'ui'
-import { useAuth } from 'hooks'
-import { HOME } from 'routes'
+import AuthPage from './authPage'
+import SignUp from './signUp'
 
 function Login () {
-  const [user, setUser] = useState({
-    email: '',
-    password: ''
-  })
-  const { login, errorMessage, fetchingUser, validatingToken } = useAuth()
+  const [value, setValue] = React.useState(0)
 
-  if (validatingToken) {
-    return <Redirect to={HOME} />
+  const handleChangeTab = (event, newValue) => {
+    setValue(newValue)
   }
 
-  function handleFieldChange (e) {
-    setUser({
-      ...user,
-      [e.target.name]: e.target.value
-    })
+  function TabPanel ({ children, value, index, ...other }) {
+    return (
+      <div
+        role='tabpanel'
+        hidden={value !== index}
+        id={`simple-tabpanel-${index}`}
+        aria-labelledby={`simple-tab-${index}`}
+        {...other}
+      >
+        {value === index && (
+          <Box p={3}>
+            {children}
+          </Box>
+        )}
+      </div>
+    )
   }
 
-  const onSubmit = async () => {
-    await login(user)
+  TabPanel.propTypes = {
+    children: t.node.isRequired,
+    value: t.number.isRequired,
+    index: t.number.isRequired
+  }
+
+  function a11yProps (index) {
+    return {
+      id: `full-width-tab-${index}`,
+      'aria-controls': `full-width-tabpanel-${index}`
+    }
   }
 
   return (
@@ -45,52 +60,22 @@ function Login () {
 
         <Grid item xs={12} sm={8} md={6} lg={4}>
           <Paper elevation={2}>
-            <GridContainer>
 
-              <Grid item>
-                {!!errorMessage &&
-                  <Alert severity='error'>
-                    {errorMessage}
-                  </Alert>}
-              </Grid>
+            <AppBar position='static' fullWidth>
+              <Tabs value={value} onChange={handleChangeTab} variant='fullWidth'>
+                <Tab label='Entrar' {...a11yProps(0)} />
+                <Tab label='Registrar' {...a11yProps(1)} />
+              </Tabs>
+            </AppBar>
 
-              {[
-                {
-                  label: 'E-mail',
-                  xs: 12,
-                  name: 'email',
-                  type: 'email'
-                },
-                {
-                  label: 'Senha',
-                  xs: 12,
-                  name: 'password',
-                  type: 'password'
-                }
-              ].map((field) => (
-                <TextField
-                  {...field}
-                  key={field.name}
-                  value={user[field.name]}
-                  onChange={handleFieldChange}
-                  disabled={fetchingUser}
-                />
-              ))}
+            <TabPanel value={value} index={0}>
+              <AuthPage />
+            </TabPanel>
 
-              <Grid item xs={8}>
-                {fetchingUser && <CircularProgress />}
-                {!fetchingUser &&
-                  <Button
-                    color='secondary'
-                    variant='contained'
-                    onClick={onSubmit}
-                    fullWidth
-                  >
-                    Entrar
-                  </Button>}
-              </Grid>
+            <TabPanel value={value} index={1}>
+              <SignUp />
+            </TabPanel>
 
-            </GridContainer>
           </Paper>
         </Grid>
       </Grid>
@@ -103,34 +88,7 @@ const Container = styled.div`
   background: linear-gradient(135deg, rgba(2,0,36,1) 0%, rgba(101,0,0,1) 68%, rgba(139,7,7,1) 83%, rgba(194,3,3,1) 100%);
   flex: 1;
   margin: 0;
-  padding: ${({ theme }) => theme.spacing(4)}px;
+  padding: ${({ theme }) => theme.spacing(3)}px;
 `
-
-const GridContainer = styled(Grid).attrs({
-  container: true,
-  justify: 'center',
-  align: 'center',
-  spacing: 2
-})`
-  && {
-    padding: ${({ theme }) => theme.spacing(3)}px;
-  }
-`
-
-function TextField ({ xs, ...props }) {
-  return (
-    <Grid item xs={xs}>
-      <MaterialTextField
-        variant='standard'
-        fullWidth
-        {...props}
-      />
-    </Grid>
-  )
-}
-
-TextField.propTypes = {
-  xs: t.number
-}
 
 export default Login

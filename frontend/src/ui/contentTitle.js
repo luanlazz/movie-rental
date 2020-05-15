@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { Grid } from '@material-ui/core'
 import { H3 } from './title'
 
-function HeaderContent ({ title }) {
+function contentTitle ({ title }) {
   return (
     <Header>
       <Grid item xs={12}>
@@ -14,7 +14,7 @@ function HeaderContent ({ title }) {
   )
 }
 
-HeaderContent.propTypes = {
+contentTitle.propTypes = {
   title: t.string.isRequired
 }
 
@@ -27,4 +27,4 @@ const Header = styled(Grid).attrs({
   }
 `
 
-export default HeaderContent
+export default contentTitle

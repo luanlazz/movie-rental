@@ -1,3 +1,5 @@
 export { default as Logo } from './logo'
 export { default as Title, H1, H2, H3, H4, H5, H6 } from './title'
-export { default as HeaderContent } from './headerContent'
+export { default as ContentTitle } from './contentTitle'
+export { default as TextField } from './text-field'
+export { default as LoginContainer } from './loginContainer'

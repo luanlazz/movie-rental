@@ -6,14 +6,17 @@ import {
 } from 'react-router-dom'
 import {
   LinearProgress,
-  withStyles
+  withStyles,
+  Snackbar
 } from '@material-ui/core'
 import Header from 'pages/header'
-import AsideMenu from 'pages/asideMenu'
-import { HOME, SUBSCRIPTIONS, INVENTARY, MANAGER } from 'routes'
+import SideMenu from 'pages/sideMenu'
+import { HOME, SUBSCRIPTIONS, INVENTARY, MANAGER, PERFIL } from 'routes'
+import Alert from '@material-ui/lab/Alert'
 
 const Catalogue = React.lazy(() => import('pages/catalogue'))
 const Subscription = React.lazy(() => import('pages/subscription'))
+const Perfil = React.lazy(() => import('pages/perfil'))
 const Manager = React.lazy(() => import('pages/manager'))
 const Inventary = React.lazy(() => import('pages/inventary'))
 
@@ -28,16 +31,30 @@ function Main () {
     <>
       <Header handleDrawerOpen={handleDrawerOpen} />
 
+      <SideMenu
+        open={drawerOpen}
+        handleDrawerOpen={handleDrawerOpen}
+      />
+
       <GridContainer>
-        {drawerOpen && <AsideMenu open={drawerOpen} />}
 
         <Spacer />
+
+        <Snackbar
+          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          open
+        >
+          <Alert severity='success'>
+            Mensagem teste
+          </Alert>
+        </Snackbar>
 
         <Suspense fallback={<LinearProgress />}>
           <Switch>
             <Route path={HOME} exact component={Catalogue} />
             <Route path={INVENTARY} component={Inventary} />
             <Route path={SUBSCRIPTIONS} component={Subscription} />
+            <Route path={PERFIL} component={Perfil} />
             <Route path={MANAGER} component={Manager} />
           </Switch>
         </Suspense>

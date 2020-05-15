@@ -38,7 +38,7 @@ Header.propTypes = {
 
 const Toolbar = styled(MaterialToolbar)`
   && {
-    border-bottom: 0.2rem solid rgba(194,3,3,1);
+    border-bottom: 0.2rem solid ${({ theme }) => theme.palette.secondary.main};
     display: flex;
     justify-content: space-between;
   }

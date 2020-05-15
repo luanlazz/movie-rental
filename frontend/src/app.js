@@ -1,30 +1,19 @@
-import React, { Suspense, useEffect } from 'react'
+import React, { Suspense } from 'react'
 import t from 'prop-types'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import { LinearProgress } from '@material-ui/core'
-import { useAuth } from 'hooks'
 import { HOME, LOGIN } from 'routes'
+import { connect } from 'react-redux'
 
 const Main = React.lazy(() => import('pages/main'))
 const Login = React.lazy(() => import('pages/login'))
 
-function App ({ location }) {
-  const { validateToken, validatingToken } = useAuth()
-
-  useEffect(() => {
-    console.log('validando token')
-    const validateUser = async () => {
-      await validateToken()
-    }
-
-    validateUser()
-  }, [])
-
-  if (validatingToken && location.pathname === LOGIN) {
+function App ({ location, authUser }) {
+  if (authUser.validateToken && location.pathname === LOGIN) {
     return <Redirect to={HOME} />
   }
 
-  if (!validatingToken && location.pathname !== LOGIN) {
+  if (!authUser.validateToken && location.pathname !== LOGIN) {
     return <Redirect to={LOGIN} />
   }
 
@@ -39,7 +28,12 @@ function App ({ location }) {
 }
 
 App.propTypes = {
-  location: t.object.isRequired
+  location: t.object.isRequired,
+  authUser: t.object.isRequired
 }
 
-export default App
+const mapStateToProps = state => ({
+  authUser: state.authUser
+})
+
+export default connect(mapStateToProps, null)(App)

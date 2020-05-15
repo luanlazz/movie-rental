@@ -1,31 +1,27 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import {
   Grid,
-  Typography,
-  LinearProgress
+  Typography
 } from '@material-ui/core'
 import {
-  HeaderContent
+  ContentTitle
 } from 'ui'
 import filmPoster from 'images/ford-vs-ferrari.jpg'
 import StarIcon from '@material-ui/icons/Star'
-import { useMovie } from 'hooks'
 
 function Catalogue () {
-  const { movies, getMovies, fetchingMovie } = useMovie()
-
-  useEffect(() => {
-    console.log('getting movies')
-    getMovies()
-  }, [])
-
+  const movies = [
+    {
+      movieId: 1,
+      title: 'Cela 7',
+      price: 4
+    }
+  ]
   return (
     <>
       <Content>
-        <HeaderContent title='Catalogo de filmes :-)' />
-
-        {fetchingMovie && <LinearProgress />}
+        <ContentTitle title='Catalogo de filmes :-)' />
 
         <CatalogueContainer>
           {movies.map((movie) => (

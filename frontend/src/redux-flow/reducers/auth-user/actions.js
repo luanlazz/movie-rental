@@ -1,0 +1,6 @@
+export const LOGIN_USER = 'auth-user:LOGIN_USER'
+export const LOGOUT_USER = 'auth-user:LOGOUT_USER'
+export const VALIDATE_TOKEN_USER = 'auth-user:VALIDATE_TOKEN_USER'
+export const FETCHING_AUTH = 'auth-user:FETCHING_AUTH'
+export const SET_USER_AUTH = 'auth-user:SET_USER_AUTH'
+export const SET_MESSAGE_AUTH = 'auth-user:SET_MESSAGE_AUTH'

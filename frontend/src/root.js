@@ -1,14 +1,18 @@
 import React from 'react'
-import { hot } from 'react-hot-loader'
+import t from 'prop-types'
+import { AppContainer } from 'react-hot-loader'
 import { ThemeProvider, createGlobalStyle } from 'styled-components'
 import { BrowserRouter, Route } from 'react-router-dom'
+import { Provider } from 'react-redux'
 import {
   CssBaseline,
   createMuiTheme,
   MuiThemeProvider
 } from '@material-ui/core'
 import { AuthProvider, MovieProvider, UsersProvider } from 'contexts'
-import App from './app'
+import configureStore from 'redux-flow/configure-store'
+
+const store = configureStore()
 
 const theme = createMuiTheme({
   typography: {
@@ -23,7 +27,7 @@ const theme = createMuiTheme({
     },
     secondary: {
       // light: will be calculated from palette.secondary.main,
-      main: '#5e35b1',
+      main: '#c20303',
       // dark: will be calculated from palette.secondary.main,
       contrastText: '#ffcc00'
     },
@@ -39,27 +43,35 @@ const theme = createMuiTheme({
 
 console.log('theme', theme)
 
-function Root () {
+const Root = ({ App }) => {
   return (
-    <MuiThemeProvider theme={theme}>
-      <ThemeProvider theme={theme}>
-        <AuthProvider>
-          <MovieProvider>
-            <UsersProvider>
+    <AppContainer>
+      <MuiThemeProvider theme={theme}>
+        <ThemeProvider theme={theme}>
+          <AuthProvider>
+            <MovieProvider>
+              <UsersProvider>
 
-              <CssBaseline />
-              <GlobalStyle />
+                <CssBaseline />
+                <GlobalStyle />
 
-              <BrowserRouter>
-                <Route component={App} />
-              </BrowserRouter>
+                <Provider store={store}>
+                  <BrowserRouter>
+                    <Route component={App} />
+                  </BrowserRouter>
+                </Provider>
 
-            </UsersProvider>
-          </MovieProvider>
-        </AuthProvider>
-      </ThemeProvider>
-    </MuiThemeProvider>
+              </UsersProvider>
+            </MovieProvider>
+          </AuthProvider>
+        </ThemeProvider>
+      </MuiThemeProvider>
+    </AppContainer>
   )
+}
+
+Root.propTypes = {
+  App: t.object.isRequired
 }
 
 const GlobalStyle = createGlobalStyle`
@@ -71,4 +83,4 @@ const GlobalStyle = createGlobalStyle`
   }
 `
 
-export default hot(module)(Root)
+export default Root

@@ -33,9 +33,12 @@ module.exports = {
       }
 
       const payload = {
-        id: user.userId,
-        name: user.name,
-        email: user.email
+        user: {
+          id: user.userId,
+          firstName: user.name,
+          lastName: '',
+          email: user.email
+        }
       }
 
       res.json({

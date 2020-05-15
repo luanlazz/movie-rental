@@ -4,14 +4,14 @@ import {
   Grid
 } from '@material-ui/core'
 import {
-  HeaderContent,
+  ContentTitle,
   H4
 } from 'ui'
 
 function Subscription () {
   return (
     <Grid container>
-      <HeaderContent title='Planos de assinatura' />
+      <ContentTitle title='Planos de assinatura' />
 
       <Grid container>
         <Grid item>

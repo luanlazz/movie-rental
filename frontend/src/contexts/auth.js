@@ -8,7 +8,7 @@ function AuthProvider ({ children }) {
   const [userInfo, setUserInfo] = useState({})
   const [errorMessage, setErrorMessage] = useState('')
   const [fetchingUser, setFetchingUser] = useState(false)
-  const [validatingToken, setValidatingToken] = useState(false)
+  const [tokenStatus, setTokenStatus] = useState(false)
 
   async function login (user) {
     setFetchingUser(true)
@@ -32,12 +32,12 @@ function AuthProvider ({ children }) {
 
   function logout () {
     setUserInfo({})
-    setValidatingToken(false)
+    setTokenStatus(false)
     localStorage.removeItem('__user')
   }
 
   async function validateToken (userParam) {
-    setValidatingToken(false)
+    setTokenStatus(false)
 
     const userStorage = await JSON.parse(localStorage.getItem('__user'))
 
@@ -45,7 +45,7 @@ function AuthProvider ({ children }) {
     localStorage.removeItem('__user')
 
     if (!user) {
-      setValidatingToken(false)
+      setTokenStatus(false)
       return
     }
 
@@ -53,7 +53,7 @@ function AuthProvider ({ children }) {
       await api.post('/validateToken', user)
         .then(res => {
           setUserInfo(user)
-          setValidatingToken(true)
+          setTokenStatus(res.data)
           localStorage.setItem('__user', JSON.stringify(user))
           api.defaults.headers.common.Authorization = `Bearer ${user.token}`
         })
@@ -74,7 +74,7 @@ function AuthProvider ({ children }) {
       userInfo,
       errorMessage,
       fetchingUser,
-      validatingToken
+      tokenStatus
     }}
     >
       {children}

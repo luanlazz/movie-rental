@@ -20,14 +20,16 @@ module.exports = {
       existsOrError(user.name, 'Informe o nome');
       existsOrError(user.email, 'Informe o e-mail');
       existsOrError(user.password, 'Informe a senha');
-      existsOrError(user.confPassword, 'Informe a senha novamente');
-      equalsOrError(user.password, user.confPassword, 'Senhas não são iguais');
+      if (!user.userId) {
+        existsOrError(user.confPassword, 'Informe a senha novamente');
+        equalsOrError(user.password, user.confPassword, 'Senhas não são iguais');
+      }
 
       const userFromDB = await db('users')
-          .where({ email: user.email }).first();
+        .where({ email: user.email }).first();
 
       if (!user.userId) {
-            notExistsOrError(userFromDB, 'Usuário já cadastrado');
+        notExistsOrError(userFromDB, 'Usuário já cadastrado');
       }
     } catch (msg) {
       return res.status(400).send(msg);
@@ -46,9 +48,9 @@ module.exports = {
         .catch(err => res.status(500).send(err));
     } else {
       await db('users')
-          .insert(user)
-          .then(_ => res.status(204).send())
-          .catch(err => res.status(500).send(err));
+        .insert(user)
+        .then(_ => res.status(204).send())
+        .catch(err => res.status(500).send(err));
     }
 
     return res.status(200);
@@ -64,7 +66,7 @@ module.exports = {
 
   async getById(req, res) {
     await db('users')
-      .select('userId', 'name', 'email')
+      .select()
       .where({ userId: req.params.id })
       .whereNull('deletedAt')
       .then(user => res.json(user))

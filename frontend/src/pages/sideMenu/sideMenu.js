@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
 import t from 'prop-types'
 import styled from 'styled-components'
+import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import {
   Avatar as MaterialAvatar,
+  Drawer,
   Grid,
   Typography,
   IconButton as MaterialIconButton
@@ -11,24 +13,36 @@ import {
 import { AccountCircle } from '@material-ui/icons'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import SettingsIcon from '@material-ui/icons/Settings'
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import UserPhotoImg from 'images/user-photo.jpg'
+import {
+  logoutUser
+} from 'redux-flow/reducers/auth-user/action-creators'
 import { HOME, SUBSCRIPTIONS, INVENTARY, MANAGER, PERFIL } from 'routes'
-import { useAuth } from 'hooks'
 
-function AsideMenu ({ open }) {
-  const { userInfo, logout } = useAuth()
-  const [currentPage, setCurrentPage] = useState(null)
+function SideMenu ({ authUser, logout, open, handleDrawerOpen }) {
+  const [currentPage, setCurrentPage] = useState('shop')
 
   function handleCurrentPage (value) {
     setCurrentPage(value)
   }
 
   return (
-    <SideMenuBar>
+    <Drawer
+      open={open}
+      anchor='left'
+      onClose={handleDrawerOpen}
+    >
+      <Content>
+        <Spacer />
 
-      <Spacer />
+        <ToggleButton>
+          <IconButton onClick={handleDrawerOpen}>
+            <ChevronLeftIcon />
+          </IconButton>
+        </ToggleButton>
 
-      <GridContainer>
+        <Spacer />
 
         <AccountContainer>
           <Avatar src={UserPhotoImg} alt='User profile' />
@@ -36,7 +50,7 @@ function AsideMenu ({ open }) {
           <UserInfoAndActions>
             <UserName>
               <Typography align='left' variant='h5'>
-                Olá, {userInfo.name}
+                Olá, {authUser.user.firstName}
               </Typography>
             </UserName>
 
@@ -63,9 +77,13 @@ function AsideMenu ({ open }) {
                 <IconButton
                   {...button}
                   key={button.value}
-                  selected={(currentPage === button.value).toString()}
+                  selected={(currentPage === button.value)}
                   onClick={() => {
-                    handleCurrentPage(button.value)
+                    if (button.onClick) {
+                      button.onClick()
+                    } else {
+                      handleCurrentPage(button.value)
+                    }
                   }}
                 >
                   {button.children}
@@ -96,7 +114,7 @@ function AsideMenu ({ open }) {
             <LinkMenu
               {...component}
               key={component.value}
-              selected={(currentPage === component.value).toString()}
+              selected={(currentPage === component.value)}
               onClick={() => {
                 handleCurrentPage(component.value)
               }}
@@ -105,44 +123,33 @@ function AsideMenu ({ open }) {
             </LinkMenu>
           ))}
         </MenuLinksContainer>
-
-      </GridContainer>
-
-    </SideMenuBar>
+      </Content>
+    </Drawer>
   )
 }
 
-AsideMenu.propTypes = {
-  open: t.bool.isRequired
+SideMenu.propTypes = {
+  authUser: t.object.isRequired,
+  logout: t.func.isRequired,
+  open: t.bool.isRequired,
+  handleDrawerOpen: t.func.isRequired
 }
 
-const SideMenuBar = styled.aside`
-  && {
-    background-color: ${({ theme }) => theme.palette.primary.light};
-    display: flex;
-    flex-direction: column;
-    margin: 0;
-    width: 300px;
-    min-height: 100%;
-  }
+const ToggleButton = styled.div`
+  display: flex;
+  justify-content: flex-end;
+`
+
+const Content = styled.div`
+  background-color: ${({ theme }) => theme.palette.primary.light};
+  min-height: 100%;
 `
 
 const Spacer = styled.div`
   && {
     display: block;
-    height: 2rem;
+    height: 1rem;
   }
-`
-
-const GridContainer = styled(Grid).attrs({
-  container: true,
-  spacing: 2
-})`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  margin: 0;
-  width: 100%;
 `
 
 const AccountContainer = styled(Grid).attrs({
@@ -181,7 +188,7 @@ const UserName = styled(Grid).attrs({
 
 const IconButton = styled(MaterialIconButton)`
   && {
-    color: ${({ selected, theme }) => (selected === 'true'
+    color: ${({ selected, theme }) => (selected
       ? theme.palette.secondary.light
       : theme.palette.common.white
     )};
@@ -220,7 +227,7 @@ LinkMenu.propTypes = {
 
 const LinkItem = styled(Link)`
   && {
-    color: ${({ selected, theme }) => (selected === 'true'
+    color: ${({ selected, theme }) => (selected
       ? theme.palette.secondary.light
       : theme.palette.common.white
     )};
@@ -235,4 +242,14 @@ const LinkItem = styled(Link)`
   }
 `
 
-export default AsideMenu
+const mapStateToProps = state => ({
+  authUser: state.authUser
+})
+
+const mapDispatchToProps = (dispatch) => ({
+  logout: async () => {
+    await dispatch(logoutUser())
+  }
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(SideMenu)
