@@ -6,16 +6,8 @@ const UsersContext = createContext()
 
 function UsersProvider ({ children }) {
   const [users, setUsers] = useState([])
-  const [user, setUser] = useState({})
   const [errorMessage, setErrorMessage] = useState('')
   const [fetchingUsers, setFetchingUsers] = useState(false)
-
-  function handleFieldChangeUser (e) {
-    setUser({
-      ...user,
-      [e.target.name]: e.target.value
-    })
-  }
 
   async function getUsers () {
     setFetchingUsers(true)
@@ -49,7 +41,7 @@ function UsersProvider ({ children }) {
     try {
       await api.get(`/users/${id}`)
         .then(res => {
-          setUser(res.data[0])
+          return res.data[0]
         })
         .catch(res => {
           setErrorMessage(res.response.data)
@@ -61,39 +53,18 @@ function UsersProvider ({ children }) {
     setFetchingUsers(false)
   }
 
-  async function saveUser () {
+  async function saveUser (user) {
     setFetchingUsers(true)
 
-    console.log('save user', user)
+    const url = user.userId ? `/users/${user.userId}` : '/signup'
 
     try {
-      await api.post(`/users/${user.userId}`, user)
+      await api.post(url, user)
         .then(() => {
           console.log('salvo com sucesso')
         })
         .catch(res => {
-          console.log('erro ao salvar', res.response.data)
-          setErrorMessage(res.response.data)
-        })
-    } catch (error) {
-      console.error('Error: ', error)
-    }
-
-    setFetchingUsers(false)
-  }
-
-  async function registerUser () {
-    setFetchingUsers(true)
-
-    console.log('save user', user)
-
-    try {
-      await api.post('/signup', user)
-        .then(() => {
-          console.log('salvo com sucesso')
-        })
-        .catch(res => {
-          console.log('erro ao salvar', res.response.data)
+          console.log(res.response.data)
           setErrorMessage(res.response.data)
         })
     } catch (error) {
@@ -108,10 +79,7 @@ function UsersProvider ({ children }) {
       getUsers,
       getUser,
       saveUser,
-      registerUser,
       users,
-      user,
-      handleFieldChangeUser,
       errorMessage,
       fetchingUsers
     }}

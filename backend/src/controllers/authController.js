@@ -2,10 +2,8 @@ const db = require('../db/db')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 
-const { authSecret } = require('../.env')
-
 function generateToken(params = {}) {
-  return jwt.sign(params, authSecret, {
+  return jwt.sign(params, process.env.AUTH_SECRET, {
     expiresIn: 86400
   })
 }
@@ -35,9 +33,11 @@ module.exports = {
       const payload = {
         user: {
           id: user.userId,
-          firstName: user.name,
-          lastName: '',
-          email: user.email
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          admin: user.admin,
+          accountVerified: user.accountVerified
         }
       }
 
@@ -55,7 +55,7 @@ module.exports = {
 
     try {
       if (userData) {
-        const token = jwt.decode(userData.token, authSecret)
+        const token = jwt.decode(userData.token, process.env.AUTH_SECRET)
         if (new Date(token.exp * 1000) > new Date()) {
           return res.send(true)
         }

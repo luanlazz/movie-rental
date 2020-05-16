@@ -9,7 +9,7 @@ import {
   createMuiTheme,
   MuiThemeProvider
 } from '@material-ui/core'
-import { AuthProvider, MovieProvider, UsersProvider } from 'contexts'
+import { MovieProvider, UsersProvider } from 'contexts'
 import configureStore from 'redux-flow/configure-store'
 
 const store = configureStore()
@@ -48,22 +48,20 @@ const Root = ({ App }) => {
     <AppContainer>
       <MuiThemeProvider theme={theme}>
         <ThemeProvider theme={theme}>
-          <AuthProvider>
-            <MovieProvider>
-              <UsersProvider>
+          <MovieProvider>
+            <UsersProvider>
 
-                <CssBaseline />
-                <GlobalStyle />
+              <CssBaseline />
+              <GlobalStyle />
 
-                <Provider store={store}>
-                  <BrowserRouter>
-                    <Route component={App} />
-                  </BrowserRouter>
-                </Provider>
+              <Provider store={store}>
+                <BrowserRouter>
+                  <Route component={App} />
+                </BrowserRouter>
+              </Provider>
 
-              </UsersProvider>
-            </MovieProvider>
-          </AuthProvider>
+            </UsersProvider>
+          </MovieProvider>
         </ThemeProvider>
       </MuiThemeProvider>
     </AppContainer>

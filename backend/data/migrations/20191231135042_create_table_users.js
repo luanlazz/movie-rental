@@ -2,8 +2,7 @@
 exports.up = function(knex) {
   return knex.schema.createTable('users', table => {
     table.increments('userId').primary()
-    table.string('firstName').notNull()
-    table.string('lastName').notNull()
+    table.string('name').notNull()
     table.string('email').notNull()
     table.string('password').notNull()
     table.timestamp('createdAt').defaultTo(knex.fn.now())
@@ -12,5 +11,5 @@ exports.up = function(knex) {
 }
 
 exports.down = function(knex) {
-  return knex.schema.dropTable('users')
+  return knex.schema.dropTableIfExists('users')
 }

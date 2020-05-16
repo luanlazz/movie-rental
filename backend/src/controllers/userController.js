@@ -1,43 +1,45 @@
-const db = require('../db/db');
-const bcrypt = require('bcryptjs');
+const db = require('../db/db')
+const bcrypt = require('bcryptjs')
 
-const { existsOrError, equalsOrError, notExistsOrError } = require('./validations');
+const { existsOrError, equalsOrError, notExistsOrError } = require('./validations')
 
-const encryptPassword = password => {
-    const salt = bcrypt.genSaltSync(10)
-    return bcrypt.hashSync(password, salt)
+const encryptPassword = (password) => {
+  const salt = bcrypt.genSaltSync(10)
+  return bcrypt.hashSync(password, salt)
 }
 
 module.exports = {
   async save(req, res) {
-    const user = req.body;
+    const user = req.body
 
     if (req.params.id) {
-      user.userId = req.params.id;
+      user.userId = req.params.id
+      delete user.password
     }
 
     try {
-      existsOrError(user.name, 'Informe o nome');
-      existsOrError(user.email, 'Informe o e-mail');
-      existsOrError(user.password, 'Informe a senha');
+      existsOrError(user.firstName, 'Informe o nome')
+      existsOrError(user.lastName, 'Informe o sobrenome')
+      existsOrError(user.email, 'Informe o e-mail')
+      existsOrError(user.password, 'Informe a senha')
       if (!user.userId) {
-        existsOrError(user.confPassword, 'Informe a senha novamente');
-        equalsOrError(user.password, user.confPassword, 'Senhas não são iguais');
+        existsOrError(user.confPassword, 'Informe a senha novamente')
+        equalsOrError(user.password, user.confPassword, 'Senhas não são iguais')
       }
 
       const userFromDB = await db('users')
-        .where({ email: user.email }).first();
+        .where({ email: user.email }).first()
 
       if (!user.userId) {
-        notExistsOrError(userFromDB, 'Usuário já cadastrado');
+        notExistsOrError(userFromDB, 'Usuário já cadastrado')
       }
     } catch (msg) {
-      return res.status(400).send(msg);
+      return res.status(400).send(msg)
     }
 
-    user.password = encryptPassword(user.password);
+    user.password = encryptPassword(user.password)
 
-    delete user.confPassword;
+    delete user.confPassword
 
     if (user.userId) {
       await db('users')
@@ -45,23 +47,23 @@ module.exports = {
         .where({ userId: user.userId })
         .whereNull('deletedAt')
         .then(_ => res.status(204).send())
-        .catch(err => res.status(500).send(err));
+        .catch(err => res.status(500).send(err))
     } else {
       await db('users')
         .insert(user)
         .then(_ => res.status(204).send())
-        .catch(err => res.status(500).send(err));
+        .catch(err => res.status(500).send(err))
     }
 
-    return res.status(200);
+    return res.status(200)
   },
 
   async get(req, res) {
     await db('users')
-      .select('userId', 'name', 'email')
+      .select('userId', 'firstName', 'lastName', 'email', 'admin')
       .whereNull('deletedAt')
       .then(users => res.json(users))
-      .catch(err => res.status(500).send(err));
+      .catch(err => res.status(500).send(err))
   },
 
   async getById(req, res) {
@@ -70,7 +72,7 @@ module.exports = {
       .where({ userId: req.params.id })
       .whereNull('deletedAt')
       .then(user => res.json(user))
-      .catch(err => res.status(500).send(err));
+      .catch(err => res.status(500).send(err))
   },
 
   async delete(req, res) {
@@ -80,12 +82,13 @@ module.exports = {
         .where({ userId: req.params.id })
         .whereNull('deletedAt');
 
-      existsOrError(rowDeleted, 'Usuário não encontrado');
+      existsOrError(rowDeleted, 'Usuário não encontrado')
 
-      return res.status(204).send();
+      return res.status(204).send()
     } catch (msg) {
-      return res.status(400).send(msg);
+      return res.status(400).send(msg)
     }
-  }
+  },
 
+  encryptPassword
 }
