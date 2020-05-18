@@ -1,53 +1,66 @@
 import React from 'react'
+import t from 'prop-types'
 import styled from 'styled-components'
+import { connect } from 'react-redux'
+import { Redirect } from 'react-router-dom'
 import {
   Button,
   CircularProgress,
   Grid
 } from '@material-ui/core'
-import {
-  LoginContainer,
-  TextField
-} from 'ui'
-import { useUsers } from 'hooks'
+import Alert from '@material-ui/lab/Alert'
 import {
   Formik,
   Form as FormMaterial
 } from 'formik'
 import * as Yup from 'yup'
+import {
+  LoginContainer,
+  TextField
+} from 'ui'
+import {
+  loginUser,
+  validateToken,
+  setFetching
+} from 'redux-flow/reducers/auth-user/action-creators'
+import { HOME } from 'routes'
 
-function RegisterUser () {
-  const { fetchingUsers, saveUser } = useUsers()
+function AuthPage ({ authUser, onSubmit, validateToken, setFetching }) {
+  if (authUser.logged) {
+    const validate = async () => {
+      await validateToken(authUser)
+    }
+
+    validate()
+  }
+
+  if (authUser.validateToken) {
+    return <Redirect to={HOME} />
+  }
+
+  const submitForm = async (values) => {
+    setFetching(true)
+    await onSubmit(values)
+    setFetching(false)
+  }
 
   return (
     <LoginContainer>
       <Formik
         initialValues={{
-          firstName: '',
-          lastName: '',
           email: '',
-          password: '',
-          confPassword: ''
+          password: ''
         }}
         validationSchema={Yup.object({
-          firstName: Yup.string()
-            .max(15, 'São no máximo 15 caracteres ou menos')
-            .required('Obrigatorio'),
-          lastName: Yup.string()
-            .max(20, 'São no máximo 20 caracteres ou menos')
-            .required('Obrigatorio'),
           email: Yup.string()
             .email('Endereço de email invalido')
             .required('Obrigatorio'),
           password: Yup.string()
             .min(5, 'Senha deve conter ao menos 5 caracteres')
-            .required('Obrigatório'),
-          confPassword: Yup.string()
-            .min(5, 'Senha deve conter ao menos 5 caracteres')
             .required('Obrigatório')
         })}
         onSubmit={async (values) => {
-          await saveUser(values)
+          await submitForm(values)
         }}
       >
         {/* eslint-disable */}
@@ -63,17 +76,15 @@ function RegisterUser () {
           {/* eslint-enable */ }
           return (
             <Form onSubmit={handleSubmit}>
+              <Grid item>
+                {!!authUser.message && (
+                  <Alert severity='error'>
+                    {authUser.message}
+                  </Alert>
+                )}
+              </Grid>
+
               {[
-                {
-                  label: 'Nome',
-                  xs: 12,
-                  name: 'firstName'
-                },
-                {
-                  label: 'Sobrenome',
-                  xs: 12,
-                  name: 'lastName'
-                },
                 {
                   label: 'E-mail',
                   xs: 12,
@@ -85,17 +96,11 @@ function RegisterUser () {
                   xs: 12,
                   name: 'password',
                   type: 'password'
-                },
-                {
-                  label: 'Confirme a senha',
-                  xs: 12,
-                  name: 'confPassword',
-                  type: 'password'
                 }
               ].map((field) => (
                 <TextField
                   {...field}
-                  key={`register-${field.name}`}
+                  key={`signin-${field.name}`}
                   label={field.label}
                   name={field.name}
                   value={values[field.name]}
@@ -108,8 +113,8 @@ function RegisterUser () {
               ))}
 
               <Grid item xs={8}>
-                {fetchingUsers && <CircularProgress />}
-                {!fetchingUsers &&
+                {authUser.fetching && <CircularProgress />}
+                {!authUser.fetching &&
                   <Button
                     type='submit'
                     variant='contained'
@@ -126,11 +131,33 @@ function RegisterUser () {
   )
 }
 
+AuthPage.propTypes = {
+  authUser: t.object.isRequired,
+  onSubmit: t.func.isRequired,
+  validateToken: t.func.isRequired,
+  setFetching: t.func.isRequired
+}
+
 const Form = styled(FormMaterial)`
   && {
-    display: block;
     min-width: 100%;
   }
 `
 
-export default RegisterUser
+const mapStateToProps = state => ({
+  authUser: state.authUser
+})
+
+const mapDispatchToProps = (dispatch) => ({
+  onSubmit: async (user) => {
+    await dispatch(loginUser(user))
+  },
+  validateToken: async (user) => {
+    await dispatch(validateToken(user))
+  },
+  setFetching: (value) => {
+    dispatch(setFetching(value))
+  }
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(AuthPage)

@@ -9,11 +9,14 @@ import {
   Tabs,
   Tab
 } from '@material-ui/core'
-import { Logo } from 'ui'
-import AuthPage from './authPage'
+import {
+  Logo
+} from 'ui'
+import SignIn from './signIn'
+import ForgotPassword from './forgotPassword'
 import SignUp from './signUp'
 
-function Login () {
+function AuthPage () {
   const [value, setValue] = React.useState(0)
 
   const handleChangeTab = (event, newValue) => {
@@ -64,16 +67,21 @@ function Login () {
             <AppBar position='static' fullWidth>
               <Tabs value={value} onChange={handleChangeTab} variant='fullWidth'>
                 <Tab label='Entrar' {...a11yProps(0)} />
-                <Tab label='Registrar' {...a11yProps(1)} />
+                <Tab label='Criar nova conta' {...a11yProps(1)} />
+                <Tab label='Esqueceu a senha?' {...a11yProps(2)} />
               </Tabs>
             </AppBar>
 
             <TabPanel value={value} index={0}>
-              <AuthPage />
+              <SignIn />
             </TabPanel>
 
             <TabPanel value={value} index={1}>
               <SignUp />
+            </TabPanel>
+
+            <TabPanel value={value} index={2}>
+              <ForgotPassword />
             </TabPanel>
 
           </Paper>
@@ -91,4 +99,4 @@ const Container = styled.div`
   padding: ${({ theme }) => theme.spacing(3)}px;
 `
 
-export default Login
+export default AuthPage

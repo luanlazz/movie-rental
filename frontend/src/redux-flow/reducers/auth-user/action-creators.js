@@ -59,7 +59,7 @@ export const logoutUser = () => async (dispatch) => {
 
 export const validateToken = (user) => async (dispatch) => {
   try {
-    await api.post('/validateToken', user)
+    await api.post('/validate-token', user)
       .then(res => {
         dispatch({
           type: VALIDATE_TOKEN_USER,

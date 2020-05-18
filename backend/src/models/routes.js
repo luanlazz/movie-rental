@@ -11,7 +11,9 @@ const routes = express.Router()
 
 routes.post('/signup', userController.save)
 routes.post('/signin', authController.signin)
-routes.post('/validateToken', authController.validateToken)
+routes.post('/forgot-password', userController.forgotPassword)
+routes.post('/reset-password', userController.resetPassword)
+routes.post('/validate-token', authController.validateToken)
 
 routes.route('/users')
   .all(authMiddleware)

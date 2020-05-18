@@ -1,24 +1,32 @@
 {
   "name": "locadora",
   "version": "1.0.0",
+  "description": "API movie rent",
   "main": "./src/index.js",
-  "license": "MIT",
   "scripts": {
     "dev": "nodemon",
     "migrate": "knex migrate:latest",
     "unmigrate": "knex migrate:rollback",
     "seed": "knex seed:run"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/luanlazz/movie-rental/tree/master/backend"
+  },
   "author": "Luan Lazzari",
+  "license": "ISC",
   "dependencies": {
     "bcryptjs": "2.4.3",
     "consign": "0.1.6",
     "core-js": "3.6.1",
     "cors": "2.8.5",
+    "crypto": "1.0.1",
     "dotenv": "8.2.0",
     "express": "4.17.1",
     "jsonwebtoken": "8.5.1",
     "knex": "0.20.6",
+    "nodemailer": "6.4.6",
+    "nodemailer-express-handlebars": "4.0.0",
     "passport": "0.4.1",
     "passport-jwt": "4.0.0",
     "pg": "7.17.0"

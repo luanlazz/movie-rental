@@ -1,6 +1,6 @@
-const db = require('../db/db')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
+const db = require('../db/db')
 
 function generateToken(params = {}) {
   return jwt.sign(params, process.env.AUTH_SECRET, {
@@ -60,10 +60,11 @@ module.exports = {
           return res.send(true)
         }
       }
-    } catch (e) {
-
+    } catch (msg) {
+      return res.status(400).send(msg)
     }
 
     res.send(false)
   }
+
 }

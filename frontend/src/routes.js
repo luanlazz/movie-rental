@@ -1,5 +1,7 @@
 export const HOME = '/'
-export const LOGIN = '/login'
+export const AUTH_PAGE = '/login'
+export const RESET_PASSWORD = '/reset-password'
+export const FORGOT_PASSWORD = '/forgot-password'
 export const SUBSCRIPTIONS = '/subscriptions'
 export const INVENTARY = '/inventary'
 export const MANAGER = '/manager'

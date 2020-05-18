@@ -1,5 +1,8 @@
 const db = require('../db/db')
 const bcrypt = require('bcryptjs')
+const crypto = require('crypto')
+const mailer = require('../services/mailer')
+const userController = require('../controllers/userController')
 
 const { existsOrError, equalsOrError, notExistsOrError } = require('./validations')
 
@@ -75,6 +78,15 @@ module.exports = {
       .catch(err => res.status(500).send(err))
   },
 
+  async getByEmail(req, res) {
+    await db('users')
+      .select()
+      .where({ email: req.params.email })
+      .whereNull('deletedAt')
+      .then(user => res.json(user))
+      .catch(err => res.status(500).send(err))
+  },
+
   async delete(req, res) {
     try {
       const rowDeleted = await db('users')
@@ -87,6 +99,89 @@ module.exports = {
       return res.status(204).send()
     } catch (msg) {
       return res.status(400).send(msg)
+    }
+  },
+
+  async forgotPassword(req, res) {
+    const { email } = req.body
+
+    try {
+      existsOrError(email, 'Informe o e-mail')
+
+      const user = await db('users')
+        .where({ email }).first()
+
+      if (!user) {
+        return res.status(400).send('Usuário não encontrado')
+      }
+
+      const token = crypto.randomBytes(20).toString('hex')
+
+      const now = new Date()
+      now.setHours(now.getHours() + 1)
+
+      user.passwordResetToken = token
+      user.passwordResetExpires = now
+
+      if (user.userId) {
+        await db('users')
+          .update(user)
+          .where({ userId: user.userId })
+          .whereNull('deletedAt')
+
+        await mailer.sendMail({
+          from: 'luanlazzari@gmail.com',
+          to: user.email,
+          subject: 'Recuperar sua senha',
+          template: 'forgot_password',
+          context: { token, email }
+        }, (err) => {
+          if (err) return res.status(400).send(err)
+
+          return res.status(204).send()
+        })
+      }
+    } catch (msg) {
+      return res.status(400).send(msg)
+    }
+  },
+
+  async resetPassword(req, res) {
+    const { email, token, password, confPassword } = req.body
+
+    try {
+      existsOrError(email, 'Informe o e-mail')
+      existsOrError(password, 'Informe a senha')
+      existsOrError(confPassword, 'Informe a senha novamente')
+      equalsOrError(password, confPassword, 'Senhas não são iguais')
+
+      const user = await db('users')
+        .where({ email: email }).first()
+
+      if (!user) {
+        return res.status(400).send('Usuário não encontrado')
+      }
+
+      if (token !== user.passwordResetToken)
+        return res.status(400).send('Token do link inválido')
+
+      const now = new Date()
+
+      if (now > user.passwordResetExpires)
+        return res.status(400).send('Token expirado')
+
+      user.password = encryptPassword(password)
+      user.passwordResetToken = null
+      user.passwordResetExpires = null
+
+      await db('users')
+        .update(user)
+        .where({ userId: user.userId })
+        .whereNull('deletedAt')
+        .then(_ => res.status(204).send())
+        .catch(err => res.status(500).send(err))
+    } catch (msg) {
+      return res.status(500).send(msg)
     }
   },
 

@@ -74,11 +74,57 @@ function UsersProvider ({ children }) {
     setFetchingUsers(false)
   }
 
+  async function forgotPassword (payload) {
+    setFetchingUsers(true)
+    let result = false
+    try {
+      await api.post('/forgot-password', payload)
+        .then(res => {
+          if (res.status === 204) {
+            result = true
+          }
+        })
+        .catch(res => {
+          setErrorMessage(res.response.data)
+        })
+    } catch (error) {
+      console.error('Error: ', error)
+    }
+
+    setFetchingUsers(false)
+    return result
+  }
+
+  async function resetPassword (payload) {
+    setFetchingUsers(true)
+
+    let result = false
+
+    try {
+      await api.post('/reset-password', payload)
+        .then(res => {
+          if (res.status === 204) {
+            result = true
+          }
+        })
+        .catch(res => {
+          setErrorMessage(res.response.data)
+        })
+    } catch (error) {
+      console.error('Error: ', error)
+    }
+
+    setFetchingUsers(false)
+    return result
+  }
+
   return (
     <UsersContext.Provider value={{
       getUsers,
       getUser,
       saveUser,
+      forgotPassword,
+      resetPassword,
       users,
       errorMessage,
       fetchingUsers
