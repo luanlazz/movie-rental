@@ -6,7 +6,6 @@ import {
 } from 'react-router-dom'
 import {
   LinearProgress,
-  withStyles,
   Snackbar
 } from '@material-ui/core'
 import Header from 'pages/header'
@@ -36,10 +35,7 @@ function Main () {
         handleDrawerOpen={handleDrawerOpen}
       />
 
-      <GridContainer>
-
-        <Spacer />
-
+      <MainContainer>
         <Snackbar
           anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
           open
@@ -59,21 +55,14 @@ function Main () {
           </Switch>
         </Suspense>
 
-      </GridContainer>
+      </MainContainer>
     </>
   )
 }
 
-const style = (theme) => ({
-  main: theme.mixins.toolbar
-})
-
-const Spacer = withStyles(style)(({ classes }) => (
-  <div className={classes.main} />
-))
-
-const GridContainer = styled.main`
-  display: flex;
+const MainContainer = styled.main`
+  background-color: ${({ theme }) => theme.palette.grey[300]};
+  display: block;
   flex-grow: 1;
 `
 

@@ -1,18 +1,16 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import t from 'prop-types'
 import styled from 'styled-components'
 import {
   Backdrop,
-  Button,
-  Grid,
   Modal,
   Paper,
-  CircularProgress
+  Grid
 } from '@material-ui/core'
 import {
-  H4,
-  TextField
+  FormikHelper
 } from 'ui'
+import * as Yup from 'yup'
 import { useSpring, animated } from 'react-spring/web.cjs'
 import { useUsers } from 'hooks'
 
@@ -42,8 +40,84 @@ const Fade = React.forwardRef(function Fade (props, ref) {
 })
 /* eslint-enable react/prop-types */
 
-function UserMaintance ({ handleCloseUserModal, openUserModal, handleSaveUser }) {
-  const { user, fetchingUsers, handleFieldChangeUser } = useUsers()
+function UserMaintance ({ handleCloseUserModal, openUserModal, userId }) {
+  const { fetching, getUser, saveUser, error } = useUsers()
+  const [message, setMessage] = useState({
+    msg: '',
+    severity: ''
+  })
+  const [user, setUser] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    confPassword: '',
+    admin: ''
+  })
+
+  useEffect(() => {
+    setMessage({
+      ...error
+    })
+  }, [error])
+
+  useEffect(() => {
+    const getUserMaintance = async () => {
+      const res = await getUser(userId)
+
+      if (res) {
+        setUser(res)
+      }
+    }
+
+    getUserMaintance()
+  }, [userId])
+
+  const handleSaveUser = async (values) => {
+    const res = await saveUser(values)
+
+    if (res) {
+      console.log('resposta save', res)
+    }
+  }
+
+  const validation = Yup.object({
+    firstName: Yup.string()
+      .max(15, 'São no máximo 15 caracteres ou menos')
+      .required('Obrigatorio'),
+    lastName: Yup.string()
+      .max(20, 'São no máximo 20 caracteres ou menos')
+      .required('Obrigatorio'),
+    email: Yup.string()
+      .email('Endereço de email invalido')
+      .required('Obrigatorio'),
+    admin: Yup.boolean()
+      .required('Obrigatório')
+  })
+
+  const fields = [
+    {
+      label: 'Nome',
+      xs: 12,
+      name: 'firstName'
+    },
+    {
+      label: 'Sobrenome',
+      xs: 12,
+      name: 'lastName'
+    },
+    {
+      label: 'E-mail',
+      xs: 12,
+      name: 'email',
+      type: 'email'
+    },
+    {
+      label: 'Admin',
+      xs: 12,
+      name: 'admin'
+    }
+  ]
 
   return (
     <UserModal
@@ -56,57 +130,19 @@ function UserMaintance ({ handleCloseUserModal, openUserModal, handleSaveUser })
       }}
     >
       <Fade in={openUserModal}>
-        <Paper elevation={2}>
-          <GridContainer>
-
-            <Grid item xs={12}>
-              <H4>Atualização de cadastro</H4>
-            </Grid>
-
-            {fetchingUsers && <CircularProgress color='inherit' />}
-
-            {[
-              {
-                label: 'Nome',
-                xs: 12,
-                name: 'name'
-              },
-              {
-                label: 'E-mail',
-                xs: 12,
-                name: 'email',
-                type: 'email'
-              }
-            ].map((field) => (
-              <TextField
-                {...field}
-                key={field.name}
-                value={user[field.name]}
-                onChange={handleFieldChangeUser}
-                disabled={fetchingUsers}
-              />
-            ))}
-
-            <Grid item>
-              <GridButtons>
-                <CancelButton
-                  variant='contained'
-                  onClick={handleCloseUserModal}
-                >
-                  Cancelar
-                </CancelButton>
-
-                <ConfirmButton
-                  variant='contained'
-                  onClick={handleSaveUser}
-                >
-                  Confirmar
-                </ConfirmButton>
-              </GridButtons>
-            </Grid>
-
-          </GridContainer>
-        </Paper>
+        <Grid container>
+          <Paper elevation={2}>
+            <FormikHelper
+              initialValues={user}
+              validation={validation}
+              submit={async values => await handleSaveUser(values)}
+              fields={fields}
+              message={message}
+              page='maintance-user'
+              fetching={fetching}
+            />
+          </Paper>
+        </Grid>
       </Fade>
     </UserModal>
   )
@@ -115,7 +151,7 @@ function UserMaintance ({ handleCloseUserModal, openUserModal, handleSaveUser })
 UserMaintance.propTypes = {
   handleCloseUserModal: t.func.isRequired,
   openUserModal: t.bool.isRequired,
-  handleSaveUser: t.func.isRequired
+  userId: t.number
 }
 
 const UserModal = styled(Modal).attrs({
@@ -127,45 +163,22 @@ const UserModal = styled(Modal).attrs({
     justify-content: center;
   }
 `
+// const CommonButton = styled(Button)`
+//   && {
+//     color: ${({ theme }) => theme.palette.common.white};
+//   }
+// `
 
-const GridContainer = styled(Grid).attrs({
-  container: true,
-  justify: 'center',
-  align: 'center',
-  spacing: 2
-})`
-  && {
-    display: flex;
-    flex-direction: column;
-    padding: ${({ theme }) => theme.spacing(3)}px;
-  }
-`
+// const CancelButton = styled(CommonButton)`
+//   && {
+//     background-color: red;
+//   }
+// `
 
-const GridButtons = styled(Grid).attrs({
-  container: true
-})`
-  && {
-    display: flex;
-    justify-content: space-around;
-  }
-`
-
-const CommonButton = styled(Button)`
-  && {
-    color: ${({ theme }) => theme.palette.common.white};
-  }
-`
-
-const CancelButton = styled(CommonButton)`
-  && {
-    background-color: red;
-  }
-`
-
-const ConfirmButton = styled(CommonButton)`
-  && {
-    background-color: green;
-  }
-`
+// const ConfirmButton = styled(CommonButton)`
+//   && {
+//     background-color: green;
+//   }
+// `
 
 export default UserMaintance

@@ -74,7 +74,6 @@ Root.propTypes = {
 
 const GlobalStyle = createGlobalStyle`
   #root {
-    background-color: ${({ theme }) => theme.palette.grey[300]};
     display: flex;
     flex-direction: column;
     min-height: 100vh;

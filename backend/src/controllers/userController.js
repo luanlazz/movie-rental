@@ -24,8 +24,8 @@ module.exports = {
       existsOrError(user.firstName, 'Informe o nome')
       existsOrError(user.lastName, 'Informe o sobrenome')
       existsOrError(user.email, 'Informe o e-mail')
-      existsOrError(user.password, 'Informe a senha')
       if (!user.userId) {
+        existsOrError(user.password, 'Informe a senha')
         existsOrError(user.confPassword, 'Informe a senha novamente')
         equalsOrError(user.password, user.confPassword, 'Senhas não são iguais')
       }
@@ -40,9 +40,10 @@ module.exports = {
       return res.status(400).send(msg)
     }
 
-    user.password = encryptPassword(user.password)
-
-    delete user.confPassword
+    if (!user.userId) {
+      user.password = encryptPassword(user.password)
+      delete user.confPassword
+    }
 
     if (user.userId) {
       await db('users')
@@ -71,18 +72,18 @@ module.exports = {
 
   async getById(req, res) {
     await db('users')
-      .select()
       .where({ userId: req.params.id })
       .whereNull('deletedAt')
+      .first()
       .then(user => res.json(user))
       .catch(err => res.status(500).send(err))
   },
 
   async getByEmail(req, res) {
     await db('users')
-      .select()
       .where({ email: req.params.email })
       .whereNull('deletedAt')
+      .first()
       .then(user => res.json(user))
       .catch(err => res.status(500).send(err))
   },

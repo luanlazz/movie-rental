@@ -192,9 +192,12 @@ const IconButton = styled(MaterialIconButton)`
       ? theme.palette.secondary.light
       : theme.palette.common.white
     )};
+    transform: ${({ selected }) => (selected ? 'scale(1.2)' : 'scale(1.0)')};
+    transition: 500ms;
 
     :hover {
       color: ${({ theme }) => theme.palette.secondary.light};
+      transform: scale(1.2);
     }
   }
 `
@@ -234,10 +237,13 @@ const LinkItem = styled(Link)`
     margin: auto;
     text-align: center;
     text-decoration: none;
+    transition: 500ms;
+    transform: ${({ selected }) => (selected ? 'scale(1.1)' : 'scale(1.0)')};
     width: 100%;
 
     :hover {
       color: ${({ theme }) => theme.palette.secondary.light};
+      transform: scale(1.1);
     }
   }
 `

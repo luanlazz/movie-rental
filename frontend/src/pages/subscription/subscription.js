@@ -10,7 +10,7 @@ import {
 
 function Subscription () {
   return (
-    <Grid container>
+    <>
       <ContentTitle title='Planos de assinatura' />
 
       <Grid container>
@@ -20,7 +20,7 @@ function Subscription () {
           <H4>Plano top</H4>
         </Grid>
       </Grid>
-    </Grid>
+    </>
   )
 }
 

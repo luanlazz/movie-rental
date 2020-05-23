@@ -5,117 +5,85 @@ import { api } from 'services'
 const UsersContext = createContext()
 
 function UsersProvider ({ children }) {
-  const [users, setUsers] = useState([])
-  const [errorMessage, setErrorMessage] = useState('')
-  const [fetchingUsers, setFetchingUsers] = useState(false)
+  const [fetching, setFetching] = useState(false)
+  const [error, setError] = useState({
+    msg: '',
+    severity: 'error'
+  })
+
+  function handleError (msg) {
+    setError({
+      ...error,
+      msg
+    })
+  }
 
   async function getUsers () {
-    setFetchingUsers(true)
-
-    const docs = []
-
     try {
-      await api.get('/users')
-        .then(res => {
-          res.data.forEach(user => {
-            docs.push({
-              ...user
-            })
-          })
-        })
-        .catch(res => {
-          setErrorMessage(res.response.data)
-        })
+      setFetching(true)
+      const res = await api.get('/users')
+      setFetching(false)
 
-      setUsers(docs)
+      return res.data
     } catch (error) {
-      console.error('Error: ', error)
+      handleError(error.response.data)
+      setFetching(false)
     }
-
-    setFetchingUsers(false)
   }
 
   async function getUser (id) {
-    setFetchingUsers(true)
-
     try {
-      await api.get(`/users/${id}`)
-        .then(res => {
-          return res.data[0]
-        })
-        .catch(res => {
-          setErrorMessage(res.response.data)
-        })
-    } catch (error) {
-      console.error('Error: ', error)
-    }
+      setFetching(true)
+      const res = await api.get(`/users/${id}`)
+      setFetching(false)
 
-    setFetchingUsers(false)
+      return res.data
+    } catch (error) {
+      handleError(error.response.data)
+      setFetching(false)
+    }
   }
 
   async function saveUser (user) {
-    setFetchingUsers(true)
-
-    const url = user.userId ? `/users/${user.userId}` : '/signup'
-
     try {
-      await api.post(url, user)
-        .then(() => {
-          console.log('salvo com sucesso')
-        })
-        .catch(res => {
-          console.log(res.response.data)
-          setErrorMessage(res.response.data)
-        })
-    } catch (error) {
-      console.error('Error: ', error)
-    }
+      const url = user.userId ? `/users/${user.userId}` : '/signup'
 
-    setFetchingUsers(false)
+      setFetching(true)
+      const res = await api.post(url, user)
+      setFetching(false)
+
+      return res.status === 204
+    } catch (error) {
+      console.log('resposta save', error.response.data)
+      handleError(error.response.data)
+      setFetching(false)
+    }
   }
 
   async function forgotPassword (payload) {
-    setFetchingUsers(true)
-    let result = false
     try {
-      await api.post('/forgot-password', payload)
-        .then(res => {
-          if (res.status === 204) {
-            result = true
-          }
-        })
-        .catch(res => {
-          setErrorMessage(res.response.data)
-        })
-    } catch (error) {
-      console.error('Error: ', error)
-    }
+      setFetching(true)
+      const res = await api.post('/forgot-password', payload)
+      setFetching(false)
 
-    setFetchingUsers(false)
-    return result
+      return res.status === 204
+    } catch (error) {
+      handleError(error.response.data)
+      setFetching(false)
+    }
   }
 
   async function resetPassword (payload) {
-    setFetchingUsers(true)
-
-    let result = false
-
     try {
-      await api.post('/reset-password', payload)
-        .then(res => {
-          if (res.status === 204) {
-            result = true
-          }
-        })
-        .catch(res => {
-          setErrorMessage(res.response.data)
-        })
-    } catch (error) {
-      console.error('Error: ', error)
-    }
+      setFetching(true)
+      const res = await api.post('/reset-password', payload)
+      setFetching(false)
 
-    setFetchingUsers(false)
-    return result
+      return res.status === 204
+    } catch (error) {
+      handleError(error.response.data)
+      setFetching(false)
+    }
   }
 
   return (
@@ -125,9 +93,8 @@ function UsersProvider ({ children }) {
       saveUser,
       forgotPassword,
       resetPassword,
-      users,
-      errorMessage,
-      fetchingUsers
+      fetching,
+      error
     }}
     >
       {children}

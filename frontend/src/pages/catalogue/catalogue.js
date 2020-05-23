@@ -1,74 +1,76 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import {
   Grid,
-  Typography
+  Typography,
+  LinearProgress
 } from '@material-ui/core'
 import {
   ContentTitle
 } from 'ui'
 import filmPoster from 'images/ford-vs-ferrari.jpg'
 import StarIcon from '@material-ui/icons/Star'
+import { useMovie } from 'hooks'
 
 function Catalogue () {
-  const movies = [
-    {
-      movieId: 1,
-      title: 'Cela 7',
-      price: 4
+  const { getMovies, fetching } = useMovie()
+  const [movies, setMovies] = useState([])
+
+  useEffect(() => {
+    const getMoviesCatalogue = async () => {
+      const res = await getMovies()
+      if (res) setMovies(res)
     }
-  ]
+
+    getMoviesCatalogue()
+  }, [])
+
   return (
     <>
-      <Content>
-        <ContentTitle title='Catalogo de filmes :-)' />
+      {fetching && <LinearProgress />}
 
-        <CatalogueContainer>
-          {movies.map((movie) => (
-            <FilmContainer key={movie.movieId}>
-              <FilmItem>
-                <FilmImage>
-                  <img src={filmPoster} alt='poster' />
-                </FilmImage>
+      <ContentTitle title='Catalogo de filmes :-)' />
 
-                <FilmInformation>
-                  <Top>
-                    <FilmTitle>
-                      {movie.title}
-                    </FilmTitle>
+      <CatalogueContainer>
+        {movies.map((movie) => (
+          <FilmContainer key={movie.movieId}>
+            <FilmItem>
+              <FilmImage>
+                <img src={filmPoster} alt='poster' />
+              </FilmImage>
 
-                    <FilmCategory>
-                      Ação
-                    </FilmCategory>
-                  </Top>
+              <FilmInformation>
+                <Top>
+                  <FilmTitle>
+                    {movie.title}
+                  </FilmTitle>
 
-                  <Bottom>
-                    <FilmRate>
-                      <StarIcon />
-                      <StarIcon />
-                      <StarIcon />
-                      <StarIcon />
-                      <StarIcon />
-                    </FilmRate>
+                  <FilmCategory>
+                    {movie.genreId}
+                  </FilmCategory>
+                </Top>
 
-                    <FilmPrice>
-                      R$ {movie.price}
-                    </FilmPrice>
-                  </Bottom>
-                </FilmInformation>
-              </FilmItem>
-            </FilmContainer>
-          ))}
-        </CatalogueContainer>
-      </Content>
+                <Bottom>
+                  <FilmRate>
+                    <StarIcon />
+                    <StarIcon />
+                    <StarIcon />
+                    <StarIcon />
+                    <StarIcon />
+                  </FilmRate>
+
+                  <FilmPrice>
+                    R$ {movie.price}
+                  </FilmPrice>
+                </Bottom>
+              </FilmInformation>
+            </FilmItem>
+          </FilmContainer>
+        ))}
+      </CatalogueContainer>
     </>
   )
 }
-
-const Content = styled(Grid).attrs({
-  container: true
-})`
-`
 
 const CatalogueContainer = styled(Grid).attrs({
   container: true

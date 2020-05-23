@@ -9,7 +9,7 @@ import {
 import MenuIcon from '@material-ui/icons/Menu'
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart'
 import { Logo } from 'ui'
-import { Link } from 'react-router-dom'
+import { Link as MaterialLink } from 'react-router-dom'
 import { HOME } from 'routes'
 
 function Header ({ handleDrawerOpen }) {
@@ -46,6 +46,12 @@ const Toolbar = styled(MaterialToolbar)`
 
 const IconButton = styled(MaterialIconButton)`
   color: ${({ theme }) => theme.palette.common.white};
+`
+
+const Link = styled(MaterialLink)`
+  && {
+    text-decoration: none;
+  }
 `
 
 export default Header

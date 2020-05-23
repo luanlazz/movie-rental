@@ -5,41 +5,26 @@ import t from 'prop-types'
 const MovieContext = createContext()
 
 function MovieProvider ({ children }) {
-  const [movies, setMovies] = useState([])
-  const [fetchingMovie, setFetchingMovie] = useState(false)
+  const [fetching, setFetching] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
   async function getMovies () {
-    setFetchingMovie(true)
-
-    const docs = []
-
     try {
-      await api.get('/movies', null)
-        .then(res => {
-          res.data.forEach(movie => {
-            docs.push({
-              ...movie
-            })
-          })
-        })
-        .catch((res) => {
-          setErrorMessage(res.response.data)
-        })
+      setFetching(true)
+      const res = await api.get('/movies', null)
+      setFetching(false)
 
-      setMovies(docs)
+      return res.data
     } catch (error) {
-      console.error('Error: ', error)
+      setErrorMessage(error.response.data)
+      setFetching(false)
     }
-
-    setFetchingMovie(false)
   }
 
   return (
     <MovieContext.Provider value={{
       getMovies,
-      movies,
-      fetchingMovie,
+      fetching,
       errorMessage
     }}
     >

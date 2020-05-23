@@ -63,32 +63,29 @@ function a11yProps (index) {
 }
 
 function Manager () {
-  const { users, getUsers, getUser, fetchingUsers, saveUser } = useUsers()
+  const { getUsers, fetching } = useUsers()
+  const [users, setUsers] = useState([])
   const [value, setValue] = useState(0)
-  const [openUserModal, setOpenUserModal] = React.useState(false)
+  const [userId, setUserId] = useState(0)
+  const [openUserModal, setOpenUserModal] = useState(false)
 
   useEffect(() => {
-    console.log('getting users')
+    const getUsersManager = async () => {
+      const docs = await getUsers()
 
-    const gettingUsers = () => {
-      getUsers()
+      setUsers(docs)
     }
 
-    gettingUsers()
-  }, [])
+    getUsersManager()
+  }, [openUserModal])
 
   async function handleUpdate (userId) {
-    await getUser(userId)
-
+    setUserId(userId)
     handleOpenUserModal()
   }
 
   function handleDelete (userId) {
     console.log('delete user', userId)
-  }
-
-  async function handleSaveUser () {
-    await saveUser()
   }
 
   const handleOpenUserModal = () => {
@@ -105,13 +102,13 @@ function Manager () {
 
   return (
     <>
-      <Content>
+      <Grid container>
         <ContentTitle title='Painel de Gerenciamento' />
 
         <UserMaintance
           handleCloseUserModal={handleCloseUserModal}
           openUserModal={openUserModal}
-          handleSaveUser={handleSaveUser}
+          userId={userId}
         />
 
         <ManagerContainer>
@@ -133,7 +130,7 @@ function Manager () {
 
           <TabPanel value={value} index={0}>
 
-            {fetchingUsers && <LinearProgress />}
+            {fetching && <LinearProgress />}
 
             <TableContainer component={Paper}>
               <Table>
@@ -141,6 +138,7 @@ function Manager () {
                   <TableRow>
                     <TableCell>Id</TableCell>
                     <TableCell>Name</TableCell>
+                    <TableCell>Sobrenome</TableCell>
                     <TableCell>E-mail</TableCell>
                     <TableCell>Ações</TableCell>
                   </TableRow>
@@ -150,7 +148,8 @@ function Manager () {
                   {users.map(user => (
                     <TableRow key={user.userId}>
                       <TableCell>{user.userId}</TableCell>
-                      <TableCell>{user.name}</TableCell>
+                      <TableCell>{user.firstName}</TableCell>
+                      <TableCell>{user.lastName}</TableCell>
                       <TableCell>{user.email}</TableCell>
                       <TableCell>
                         <IconButton onClick={() => { handleUpdate(user.userId) }}>
@@ -187,7 +186,7 @@ function Manager () {
 
           </TabPanel>
         </ManagerContainer>
-      </Content>
+      </Grid>
     </>
   )
 }
@@ -195,11 +194,6 @@ function Manager () {
 Manager.propTypes = {
   theme: t.object
 }
-
-const Content = styled(Grid).attrs({
-  container: true
-})`
-`
 
 const ManagerContainer = styled(Grid).attrs({
   container: true

@@ -3,7 +3,7 @@ import t from 'prop-types'
 import styled from 'styled-components'
 import { Grid } from '@material-ui/core'
 
-function LoginContainer ({ children }) {
+function ContainerCenter ({ children }) {
   return (
     <GridContainer>
       {children}
@@ -11,7 +11,7 @@ function LoginContainer ({ children }) {
   )
 }
 
-LoginContainer.propTypes = {
+ContainerCenter.propTypes = {
   children: t.node.isRequired
 }
 
@@ -26,4 +26,4 @@ const GridContainer = styled(Grid).attrs({
   }
 `
 
-export default LoginContainer
+export default ContainerCenter

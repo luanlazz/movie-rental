@@ -15,6 +15,7 @@ import {
 import SignIn from './signIn'
 import ForgotPassword from './forgotPassword'
 import SignUp from './signUp'
+import backgroundImage from 'images/movies.jpg'
 
 function AuthPage () {
   const [value, setValue] = React.useState(0)
@@ -56,6 +57,9 @@ function AuthPage () {
 
   return (
     <Container>
+
+      <BackgroundComponent src={backgroundImage} alt='background image' />
+
       <Grid container justify='center' align='center'>
         <Grid item xs={12}>
           <Logo />
@@ -64,7 +68,7 @@ function AuthPage () {
         <Grid item xs={12} sm={8} md={6} lg={4}>
           <Paper elevation={2}>
 
-            <AppBar position='static' fullWidth>
+            <AppBar position='static'>
               <Tabs value={value} onChange={handleChangeTab} variant='fullWidth'>
                 <Tab label='Entrar' {...a11yProps(0)} />
                 <Tab label='Criar nova conta' {...a11yProps(1)} />
@@ -92,11 +96,16 @@ function AuthPage () {
 }
 
 const Container = styled.div`
-  background: rgb(2,0,36);
-  background: linear-gradient(135deg, rgba(2,0,36,1) 0%, rgba(101,0,0,1) 68%, rgba(139,7,7,1) 83%, rgba(194,3,3,1) 100%);
-  flex: 1;
-  margin: 0;
-  padding: ${({ theme }) => theme.spacing(3)}px;
+  && {
+    background-color: transparent;
+    flex: 1;
+    margin: 0;
+  }
+`
+
+const BackgroundComponent = styled.img`
+  position: absolute;
+  z-index: -1;
 `
 
 export default AuthPage

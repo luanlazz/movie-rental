@@ -8,21 +8,18 @@ import {
   FETCHING_AUTH
 } from './actions'
 
-export const loginUser = (user) => async (dispatch) => {
+export const loginUser = (userParam) => async (dispatch) => {
   try {
-    await api.post('/signin', user)
-      .then(res => {
-        const { user, token } = res.data
-        dispatch({
-          type: LOGIN_USER,
-          payload: { user, token }
-        })
-      })
-      .catch(res => {
-        dispatch(setMessage(res.response.data))
-      })
+    const res = await api.post('/signin', userParam)
+
+    const { user, token } = res.data
+
+    dispatch({
+      type: LOGIN_USER,
+      payload: { user, token }
+    })
   } catch (error) {
-    console.error('Erro in login', error)
+    dispatch(setMessage(error.response.data))
   }
 }
 
@@ -33,7 +30,7 @@ export const setUserAuth = (name, value) => (dispatch) => {
       payload: { name, value }
     })
   } catch (error) {
-    console.error('Erro in setUser', error)
+    dispatch(setMessage(error.response.data))
   }
 }
 
@@ -53,26 +50,23 @@ export const logoutUser = () => async (dispatch) => {
       type: LOGOUT_USER
     })
   } catch (error) {
-    console.error('Error in logout', error)
+    dispatch(setMessage(error.response.data))
   }
 }
 
-export const validateToken = (user) => async (dispatch) => {
+export const validateToken = (userParam) => async (dispatch) => {
   try {
-    await api.post('/validate-token', user)
-      .then(res => {
-        dispatch({
-          type: VALIDATE_TOKEN_USER,
-          payload: {
-            value: res.data
-          }
-        })
-        api.defaults.headers.common.Authorization = `Bearer ${user.token}`
-      })
-      .catch(res => {
-        console.log(res.response.data)
-      })
+    const res = await api.post('/validate-token', userParam)
+
+    dispatch({
+      type: VALIDATE_TOKEN_USER,
+      payload: {
+        value: res.data
+      }
+    })
+
+    api.defaults.headers.common.Authorization = `Bearer ${userParam.token}`
   } catch (error) {
-    console.error('Error in validate token', error)
+    dispatch(setMessage(error.response.data))
   }
 }

@@ -6,11 +6,11 @@ import { H3 } from './title'
 
 function contentTitle ({ title }) {
   return (
-    <Header>
+    <GridTitle>
       <Grid item xs={12}>
         <H3>{title}</H3>
       </Grid>
-    </Header>
+    </GridTitle>
   )
 }
 
@@ -18,7 +18,7 @@ contentTitle.propTypes = {
   title: t.string.isRequired
 }
 
-const Header = styled(Grid).attrs({
+const GridTitle = styled(Grid).attrs({
   container: true
 })`
   && {
