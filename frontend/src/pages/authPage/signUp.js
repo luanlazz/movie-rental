@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import {
-  FormikHelper
-} from 'ui'
+import { FormikHelper } from 'ui'
 import { useUsers } from 'hooks'
 import * as Yup from 'yup'
 

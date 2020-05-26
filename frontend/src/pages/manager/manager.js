@@ -1,206 +1,128 @@
-import React, { useState, useEffect } from 'react'
-import t from 'prop-types'
+import React, { Suspense } from 'react'
+import PropTypes from 'prop-types'
 import styled from 'styled-components'
+import { Link as MaterialLink, Route, Switch } from 'react-router-dom'
 import {
-  AppBar,
   Box,
   Grid,
-  Tab,
-  Tabs,
-  Table,
-  TableBody,
-  TableRow,
-  TableContainer,
-  TableHead,
-  Paper,
-  TableCell,
-  IconButton,
-  LinearProgress
+  LinearProgress,
+  Typography
 } from '@material-ui/core'
 import {
-  ContentTitle,
-  H3
+  ContentTitle
 } from 'ui'
-import EditIcon from '@material-ui/icons/Edit'
-import DeleteIcon from '@material-ui/icons/Delete'
-import { useUsers } from 'hooks'
-import UserMaintance from './user-maintance'
-
-import FavoriteIcon from '@material-ui/icons/Favorite'
 import PersonPinIcon from '@material-ui/icons/PersonPin'
+import { MANAGER_USERS, MANAGER_FILMS, MANAGER_CATEGORIES } from 'routes'
 
-function TabPanel (props) {
-  const { children, value, index, ...other } = props
-
-  return (
-    <div
-      role='tabpanel'
-      hidden={value !== index}
-      id={`scrollable-force-tabpanel-${index}`}
-      aria-labelledby={`scrollable-force-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box p={3}>
-          {children}
-        </Box>
-      )}
-    </div>
-  )
-}
-
-TabPanel.propTypes = {
-  children: t.node,
-  index: t.any.isRequired,
-  value: t.any.isRequired
-}
-
-function a11yProps (index) {
-  return {
-    id: `scrollable-force-tab-${index}`,
-    'aria-controls': `scrollable-force-tabpanel-${index}`
-  }
-}
+const UserPage = React.lazy(() => import('./user-page'))
 
 function Manager () {
-  const { getUsers, fetching } = useUsers()
-  const [users, setUsers] = useState([])
-  const [value, setValue] = useState(0)
-  const [userId, setUserId] = useState(0)
-  const [openUserModal, setOpenUserModal] = useState(false)
-
-  useEffect(() => {
-    const getUsersManager = async () => {
-      const docs = await getUsers()
-
-      setUsers(docs)
-    }
-
-    getUsersManager()
-  }, [openUserModal])
-
-  async function handleUpdate (userId) {
-    setUserId(userId)
-    handleOpenUserModal()
-  }
-
-  function handleDelete (userId) {
-    console.log('delete user', userId)
-  }
-
-  const handleOpenUserModal = () => {
-    setOpenUserModal(true)
-  }
-
-  const handleCloseUserModal = () => {
-    setOpenUserModal(false)
-  }
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue)
-  }
-
   return (
     <>
       <Grid container>
         <ContentTitle title='Painel de Gerenciamento' />
 
-        <UserMaintance
-          handleCloseUserModal={handleCloseUserModal}
-          openUserModal={openUserModal}
-          userId={userId}
-        />
-
         <ManagerContainer>
-          <AppBar position='static' color='inherit'>
-            <Tabs
-              value={value}
-              onChange={handleChange}
-              variant='standard'
-              scrollButtons='on'
-              indicatorColor='primary'
-              textColor='primary'
-              aria-label='scrollable force tabs'
+
+          <GridButtons>
+
+            <ButtonMaintance
+              to={MANAGER_USERS}
+              description='Usuários'
             >
-              <Tab label='Usuários' icon={<PersonPinIcon />} {...a11yProps(0)} />
-              <Tab label='Filmes' icon={<FavoriteIcon />} {...a11yProps(1)} />
-              <Tab label='Categorias' icon={<PersonPinIcon />} {...a11yProps(2)} />
-            </Tabs>
-          </AppBar>
+              <PersonPinIcon fontSize='large' />
+            </ButtonMaintance>
 
-          <TabPanel value={value} index={0}>
+            <ButtonMaintance
+              to={MANAGER_FILMS}
+              description='Filmes'
+            >
+              <PersonPinIcon fontSize='large' />
+            </ButtonMaintance>
 
-            {fetching && <LinearProgress />}
+            <ButtonMaintance
+              to={MANAGER_CATEGORIES}
+              description='Categorias'
+            >
+              <PersonPinIcon fontSize='large' />
+            </ButtonMaintance>
 
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Id</TableCell>
-                    <TableCell>Name</TableCell>
-                    <TableCell>Sobrenome</TableCell>
-                    <TableCell>E-mail</TableCell>
-                    <TableCell>Ações</TableCell>
-                  </TableRow>
-                </TableHead>
+          </GridButtons>
 
-                <TableBody>
-                  {users.map(user => (
-                    <TableRow key={user.userId}>
-                      <TableCell>{user.userId}</TableCell>
-                      <TableCell>{user.firstName}</TableCell>
-                      <TableCell>{user.lastName}</TableCell>
-                      <TableCell>{user.email}</TableCell>
-                      <TableCell>
-                        <IconButton onClick={() => { handleUpdate(user.userId) }}>
-                          <EditIcon />
-                        </IconButton>
+          <Suspense fallback={<LinearProgress />}>
+            <Switch>
+              <Route path={MANAGER_USERS} component={UserPage} />
+            </Switch>
+          </Suspense>
 
-                        <IconButton onClick={() => { handleDelete(user.userId) }}>
-                          <DeleteIcon />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </TabPanel>
-
-          <TabPanel value={value} index={1}>
-            <Grid container>
-              <H3>teste</H3>
-            </Grid>
-
-          </TabPanel>
-          <TabPanel value={value} index={2}>
-            <Grid container>
-              <H3>teste</H3>
-            </Grid>
-
-          </TabPanel>
-          <TabPanel value={value} index={3}>
-            <Grid container>
-              <H3>teste</H3>
-            </Grid>
-
-          </TabPanel>
         </ManagerContainer>
       </Grid>
     </>
   )
 }
 
-Manager.propTypes = {
-  theme: t.object
-}
-
 const ManagerContainer = styled(Grid).attrs({
   container: true
 })`
   && {
-    justify-content: space-evenly;
+    max-width: 80vw;
+    margin: auto;
     padding: ${({ theme }) => theme.spacing(2)}px;
+  }
+`
+
+const GridButtons = styled(Grid).attrs({
+  container: true
+})`
+  && {
+    align-items: center;
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 2rem;
+    padding: ${({ theme }) => theme.spacing(2)}px;
+  }
+`
+
+function ButtonMaintance ({ children, description, ...props }) {
+  return (
+    <Grid item>
+      <Link {...props}>
+        <BoxPainel>
+          {children}
+          <Typography>{description}</Typography>
+        </BoxPainel>
+      </Link>
+    </Grid>
+  )
+}
+
+ButtonMaintance.propTypes = {
+  children: PropTypes.node.isRequired,
+  description: PropTypes.string.isRequired
+}
+
+const Link = styled(MaterialLink)`
+  && {
+    text-decoration: none;
+  }
+`
+
+const BoxPainel = styled(Box)`
+  && {
+    align-items: center;
+    background-color: ${({ theme }) => theme.palette.grey[500]};
+    border-radius: 10%;
+    color: ${({ theme }) => theme.palette.common.white};
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 5rem;
+    transition: 500ms;
+    width: 5rem;
+  }
+
+  :hover {
+    transform: scale(1.1);
   }
 `
 

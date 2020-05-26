@@ -9,8 +9,8 @@ import {
 import { LinearProgress } from '@material-ui/core'
 import {
   HOME,
-  AUTH_PAGE,
-  RESET_PASSWORD
+  RESET_PASSWORD,
+  AUTH_PAGE
 } from 'routes'
 
 const AuthPage = React.lazy(() => import('pages/authPage'))
@@ -18,11 +18,11 @@ const ResetPassword = React.lazy(() => import('pages/authPage/resetPassword'))
 const Main = React.lazy(() => import('pages/main'))
 
 function App ({ location, authUser }) {
-  if (authUser.validateToken && location.pathname === AUTH_PAGE && location.pathname !== RESET_PASSWORD) {
+  if (authUser.validateToken && location.pathname === AUTH_PAGE) {
     return <Redirect to={HOME} />
   }
 
-  if (!authUser.validateToken && location.pathname !== AUTH_PAGE && location.pathname !== RESET_PASSWORD) {
+  if (!authUser.validateToken && location.pathname !== AUTH_PAGE) {
     return <Redirect to={AUTH_PAGE} />
   }
 

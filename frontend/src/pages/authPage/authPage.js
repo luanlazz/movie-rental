@@ -1,60 +1,23 @@
-import React from 'react'
-import t from 'prop-types'
+import React, { lazy, Suspense } from 'react'
 import styled from 'styled-components'
+import { Route, Switch } from 'react-router-dom'
 import {
-  AppBar,
-  Box,
   Grid,
   Paper,
-  Tabs,
-  Tab
+  LinearProgress
 } from '@material-ui/core'
 import {
   Logo
 } from 'ui'
-import SignIn from './signIn'
-import ForgotPassword from './forgotPassword'
-import SignUp from './signUp'
+import { SIGN_UP, FORGOT_PASSWORD, RESET_PASSWORD } from 'routes'
 import backgroundImage from 'images/movies.jpg'
 
+const SignIn = lazy(() => import('./signIn'))
+const SignUp = lazy(() => import('./signUp'))
+const ForgotPassword = lazy(() => import('./forgotPassword'))
+const ResetPassword = lazy(() => import('./resetPassword'))
+
 function AuthPage () {
-  const [value, setValue] = React.useState(0)
-
-  const handleChangeTab = (event, newValue) => {
-    setValue(newValue)
-  }
-
-  function TabPanel ({ children, value, index, ...other }) {
-    return (
-      <div
-        role='tabpanel'
-        hidden={value !== index}
-        id={`simple-tabpanel-${index}`}
-        aria-labelledby={`simple-tab-${index}`}
-        {...other}
-      >
-        {value === index && (
-          <Box p={3}>
-            {children}
-          </Box>
-        )}
-      </div>
-    )
-  }
-
-  TabPanel.propTypes = {
-    children: t.node.isRequired,
-    value: t.number.isRequired,
-    index: t.number.isRequired
-  }
-
-  function a11yProps (index) {
-    return {
-      id: `full-width-tab-${index}`,
-      'aria-controls': `full-width-tabpanel-${index}`
-    }
-  }
-
   return (
     <Container>
 
@@ -68,25 +31,14 @@ function AuthPage () {
         <Grid item xs={12} sm={8} md={6} lg={4}>
           <Paper elevation={2}>
 
-            <AppBar position='static'>
-              <Tabs value={value} onChange={handleChangeTab} variant='fullWidth'>
-                <Tab label='Entrar' {...a11yProps(0)} />
-                <Tab label='Criar nova conta' {...a11yProps(1)} />
-                <Tab label='Esqueceu a senha?' {...a11yProps(2)} />
-              </Tabs>
-            </AppBar>
-
-            <TabPanel value={value} index={0}>
-              <SignIn />
-            </TabPanel>
-
-            <TabPanel value={value} index={1}>
-              <SignUp />
-            </TabPanel>
-
-            <TabPanel value={value} index={2}>
-              <ForgotPassword />
-            </TabPanel>
+            <Suspense fallback={<LinearProgress />}>
+              <Switch>
+                <Route path={SIGN_UP} component={SignUp} />
+                <Route path={RESET_PASSWORD} component={ResetPassword} />
+                <Route path={FORGOT_PASSWORD} component={ForgotPassword} />
+                <Route component={SignIn} />
+              </Switch>
+            </Suspense>
 
           </Paper>
         </Grid>
@@ -97,7 +49,6 @@ function AuthPage () {
 
 const Container = styled.div`
   && {
-    background-color: transparent;
     flex: 1;
     margin: 0;
   }

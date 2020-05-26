@@ -1,24 +1,25 @@
 import React, { useEffect } from 'react'
-import t from 'prop-types'
+import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { Redirect } from 'react-router-dom'
 import {
   loginUser,
   validateToken,
   setFetching
 } from 'redux-flow/reducers/auth-user/action-creators'
-import {
-  FormikHelper
-} from 'ui'
+import { openSnackbar } from 'redux-flow/reducers/snackbars/action-creators'
+import { FormikHelper } from 'ui'
 import * as Yup from 'yup'
-import { HOME } from 'routes'
+// import { HOME, SIGN_UP, FORGOT_PASSWORD } from 'routes'
+// import { Button } from '@material-ui/core'
 
-function AuthPage ({ authUser, onSubmit, validateToken, setFetching }) {
+function SignIn ({ authUser, onSubmit, validateToken, setFetching, openSnackbarSignin }) {
   useEffect(() => {
-    console.log('effect valida token')
-
     const validate = async () => {
-      await validateToken(authUser)
+      const res = await validateToken(authUser)
+
+      if (res) {
+        openSnackbarSignin('Logado com suceso!', 'success')
+      }
     }
 
     if (authUser.logged) {
@@ -26,9 +27,9 @@ function AuthPage ({ authUser, onSubmit, validateToken, setFetching }) {
     }
   }, [authUser, validateToken])
 
-  if (authUser.validateToken) {
-    return <Redirect to={HOME} />
-  }
+  // if (authUser.validateToken) {
+  //   return <Redirect to={HOME} />
+  // }
 
   const submitForm = async (values) => {
     setFetching(true)
@@ -66,26 +67,37 @@ function AuthPage ({ authUser, onSubmit, validateToken, setFetching }) {
   ]
 
   return (
-    <FormikHelper
-      initialValues={initialValues}
-      validation={validation}
-      submit={async values => await submitForm(values)}
-      fields={fields}
-      message={{
-        message: authUser.message,
-        severity: 'error'
-      }}
-      page='signin'
-      fetching={authUser.fetching}
-    />
+    <>
+      <FormikHelper
+        initialValues={initialValues}
+        validation={validation}
+        submit={async values => await submitForm(values)}
+        fields={fields}
+        message={{
+          msg: authUser.message,
+          severity: 'error'
+        }}
+        page='signin'
+        fetching={authUser.fetching}
+      />
+
+      {/* <Button onClick={() => history.push(SIGN_UP)}>
+        <H6>Ainda não tem uma conta? crie uma aqui</H6>
+      </Button>
+
+      <Button onClick={() => history.push(FORGOT_PASSWORD)}>
+        <H6>Esqueceu sua senha? clique aqui</H6>
+      </Button> */}
+    </>
   )
 }
 
-AuthPage.propTypes = {
-  authUser: t.object.isRequired,
-  onSubmit: t.func.isRequired,
-  validateToken: t.func.isRequired,
-  setFetching: t.func.isRequired
+SignIn.propTypes = {
+  authUser: PropTypes.object.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+  validateToken: PropTypes.func.isRequired,
+  setFetching: PropTypes.func.isRequired,
+  openSnackbarSignin: PropTypes.func.isRequired
 }
 
 const mapStateToProps = state => ({
@@ -97,11 +109,15 @@ const mapDispatchToProps = (dispatch) => ({
     await dispatch(loginUser(user))
   },
   validateToken: async (user) => {
-    await dispatch(validateToken(user))
+    const res = await dispatch(validateToken(user))
+    return res
   },
   setFetching: (value) => {
     dispatch(setFetching(value))
+  },
+  openSnackbarSignin: (message, severity) => {
+    dispatch(openSnackbar(message, severity))
   }
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(AuthPage)
+export default connect(mapStateToProps, mapDispatchToProps)(SignIn)

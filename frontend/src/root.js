@@ -1,5 +1,5 @@
 import React from 'react'
-import t from 'prop-types'
+import PropTypes from 'prop-types'
 import { AppContainer } from 'react-hot-loader'
 import { ThemeProvider, createGlobalStyle } from 'styled-components'
 import { BrowserRouter, Route } from 'react-router-dom'
@@ -41,7 +41,7 @@ const theme = createMuiTheme({
   }
 })
 
-console.log('theme', theme)
+console.log('theme: ', theme)
 
 const Root = ({ App }) => {
   return (
@@ -69,7 +69,7 @@ const Root = ({ App }) => {
 }
 
 Root.propTypes = {
-  App: t.object.isRequired
+  App: PropTypes.object.isRequired
 }
 
 const GlobalStyle = createGlobalStyle`

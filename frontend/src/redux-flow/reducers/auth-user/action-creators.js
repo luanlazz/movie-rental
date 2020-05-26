@@ -66,7 +66,10 @@ export const validateToken = (userParam) => async (dispatch) => {
     })
 
     api.defaults.headers.common.Authorization = `Bearer ${userParam.token}`
+
+    return true
   } catch (error) {
     dispatch(setMessage(error.response.data))
+    return false
   }
 }

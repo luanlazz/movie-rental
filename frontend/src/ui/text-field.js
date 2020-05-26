@@ -1,5 +1,5 @@
 import React from 'react'
-import t from 'prop-types'
+import PropTypes from 'prop-types'
 import {
   Grid,
   TextField as MaterialTextField
@@ -18,7 +18,7 @@ function TextField ({ xs, ...props }) {
 }
 
 TextField.propTypes = {
-  xs: t.number
+  xs: PropTypes.number
 }
 
 export default TextField

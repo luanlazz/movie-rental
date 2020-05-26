@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import t from 'prop-types'
+import PropTypes from 'prop-types'
 import { Redirect } from 'react-router-dom'
 import * as Yup from 'yup'
-import {
-  FormikHelper
-} from 'ui'
+import { FormikHelper } from 'ui'
 import { useUsers } from 'hooks'
 import { AUTH_PAGE } from 'routes'
 
@@ -105,7 +103,7 @@ function ResetPassword ({ location }) {
 }
 
 ResetPassword.propTypes = {
-  location: t.object.isRequired
+  location: PropTypes.object.isRequired
 }
 
 export default ResetPassword

@@ -1,5 +1,5 @@
 import React from 'react'
-import t from 'prop-types'
+import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { Grid } from '@material-ui/core'
 
@@ -12,7 +12,7 @@ function ContainerCenter ({ children }) {
 }
 
 ContainerCenter.propTypes = {
-  children: t.node.isRequired
+  children: PropTypes.node.isRequired
 }
 
 const GridContainer = styled(Grid).attrs({

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import t from 'prop-types'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 import styled from 'styled-components'
 import {
   Backdrop,
@@ -12,6 +13,7 @@ import {
 } from 'ui'
 import * as Yup from 'yup'
 import { useSpring, animated } from 'react-spring/web.cjs'
+import { openSnackbar } from 'redux-flow/reducers/snackbars/action-creators'
 import { useUsers } from 'hooks'
 
 /* eslint-disable react/prop-types */
@@ -40,7 +42,7 @@ const Fade = React.forwardRef(function Fade (props, ref) {
 })
 /* eslint-enable react/prop-types */
 
-function UserMaintance ({ handleCloseUserModal, openUserModal, userId }) {
+function UserMaintance ({ handleCloseUserModal, openUserModal, userId, openSnackbarUser }) {
   const { fetching, getUser, saveUser, error } = useUsers()
   const [message, setMessage] = useState({
     msg: '',
@@ -77,7 +79,8 @@ function UserMaintance ({ handleCloseUserModal, openUserModal, userId }) {
     const res = await saveUser(values)
 
     if (res) {
-      console.log('resposta save', res)
+      openSnackbarUser('Alterações salvas com sucesso!', 'success')
+      handleCloseUserModal()
     }
   }
 
@@ -149,9 +152,10 @@ function UserMaintance ({ handleCloseUserModal, openUserModal, userId }) {
 }
 
 UserMaintance.propTypes = {
-  handleCloseUserModal: t.func.isRequired,
-  openUserModal: t.bool.isRequired,
-  userId: t.number
+  handleCloseUserModal: PropTypes.func.isRequired,
+  openUserModal: PropTypes.bool.isRequired,
+  userId: PropTypes.number,
+  openSnackbarUser: PropTypes.func
 }
 
 const UserModal = styled(Modal).attrs({
@@ -163,22 +167,11 @@ const UserModal = styled(Modal).attrs({
     justify-content: center;
   }
 `
-// const CommonButton = styled(Button)`
-//   && {
-//     color: ${({ theme }) => theme.palette.common.white};
-//   }
-// `
 
-// const CancelButton = styled(CommonButton)`
-//   && {
-//     background-color: red;
-//   }
-// `
+const mapDispatchToProps = (dispatch) => ({
+  openSnackbarUser: (message, severity) => {
+    dispatch(openSnackbar(message, severity))
+  }
+})
 
-// const ConfirmButton = styled(CommonButton)`
-//   && {
-//     background-color: green;
-//   }
-// `
-
-export default UserMaintance
+export default connect(null, mapDispatchToProps)(UserMaintance)

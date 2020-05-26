@@ -1,23 +1,17 @@
-import React, { Suspense, useState } from 'react'
+import React, { lazy, Suspense, useState } from 'react'
 import styled from 'styled-components'
-import {
-  Switch,
-  Route
-} from 'react-router-dom'
-import {
-  LinearProgress,
-  Snackbar
-} from '@material-ui/core'
+import { Switch, Route } from 'react-router'
+import { LinearProgress } from '@material-ui/core'
+import { Snackbar } from 'ui'
 import Header from 'pages/header'
 import SideMenu from 'pages/sideMenu'
 import { HOME, SUBSCRIPTIONS, INVENTARY, MANAGER, PERFIL } from 'routes'
-import Alert from '@material-ui/lab/Alert'
 
-const Catalogue = React.lazy(() => import('pages/catalogue'))
-const Subscription = React.lazy(() => import('pages/subscription'))
-const Perfil = React.lazy(() => import('pages/perfil'))
-const Manager = React.lazy(() => import('pages/manager'))
-const Inventary = React.lazy(() => import('pages/inventary'))
+const Catalogue = lazy(() => import('pages/catalogue'))
+const Subscription = lazy(() => import('pages/subscription'))
+const Perfil = lazy(() => import('pages/perfil'))
+const Manager = lazy(() => import('pages/manager'))
+const Inventary = lazy(() => import('pages/inventary'))
 
 function Main () {
   const [drawerOpen, setDrawerOpen] = useState(true)
@@ -35,26 +29,18 @@ function Main () {
         handleDrawerOpen={handleDrawerOpen}
       />
 
-      <MainContainer>
-        <Snackbar
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-          open
-        >
-          <Alert severity='success'>
-            Mensagem teste
-          </Alert>
-        </Snackbar>
+      <Snackbar />
 
+      <MainContainer>
         <Suspense fallback={<LinearProgress />}>
           <Switch>
-            <Route path={HOME} exact component={Catalogue} />
+            <Route path={HOME} component={Catalogue} />
             <Route path={INVENTARY} component={Inventary} />
             <Route path={SUBSCRIPTIONS} component={Subscription} />
             <Route path={PERFIL} component={Perfil} />
             <Route path={MANAGER} component={Manager} />
           </Switch>
         </Suspense>
-
       </MainContainer>
     </>
   )

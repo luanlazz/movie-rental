@@ -1,5 +1,5 @@
 import React from 'react'
-import t from 'prop-types'
+import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import {
   Formik,
@@ -88,15 +88,15 @@ function FormikHandler ({ initialValues, validation, submit, fields, message, pa
 }
 
 FormikHandler.propTypes = {
-  initialValues: t.object.isRequired,
-  validation: t.object.isRequired,
-  submit: t.func.isRequired,
-  fields: t.array.isRequired,
-  message: t.object,
-  page: t.string,
-  fetching: t.bool,
-  success: t.bool,
-  completed: t.number
+  initialValues: PropTypes.object.isRequired,
+  validation: PropTypes.object.isRequired,
+  submit: PropTypes.func.isRequired,
+  fields: PropTypes.array.isRequired,
+  message: PropTypes.object,
+  page: PropTypes.string,
+  fetching: PropTypes.bool,
+  success: PropTypes.bool,
+  completed: PropTypes.number
 }
 
 const Form = styled(FormMaterial)`

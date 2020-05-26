@@ -1,5 +1,5 @@
 import React from 'react'
-import t from 'prop-types'
+import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { Grid } from '@material-ui/core'
 import { H3 } from './title'
@@ -15,7 +15,7 @@ function contentTitle ({ title }) {
 }
 
 contentTitle.propTypes = {
-  title: t.string.isRequired
+  title: PropTypes.string.isRequired
 }
 
 const GridTitle = styled(Grid).attrs({
