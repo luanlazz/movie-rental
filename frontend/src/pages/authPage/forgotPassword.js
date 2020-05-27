@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { FormikHelper } from 'ui'
+import { FormikHelper, H4 } from 'ui'
 import * as Yup from 'yup'
 import { useUsers } from 'hooks'
+import { Grid } from '@material-ui/core'
 
 function ForgotPassword () {
   const { fetching, forgotPassword, error } = useUsers()
@@ -49,16 +50,23 @@ function ForgotPassword () {
   ]
 
   return (
-    <FormikHelper
-      initialValues={initialValues}
-      validation={validation}
-      submit={async values => handleSubmitForgotPassword(values)}
-      fields={fields}
-      message={message}
-      page='forgot-password'
-      fetching={fetching}
-      success={success}
-    />
+    <>
+      <Grid container justify='center'>
+        <H4>Recuperar senha</H4>
+      </Grid>
+
+      <FormikHelper
+        initialValues={initialValues}
+        validation={validation}
+        submit={async values => handleSubmitForgotPassword(values)}
+        fields={fields}
+        message={message}
+        page='forgot-password'
+        fetching={fetching}
+        success={success}
+      />
+
+    </>
   )
 }
 

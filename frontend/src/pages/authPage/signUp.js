@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { FormikHelper } from 'ui'
+import { Grid } from '@material-ui/core'
+import { FormikHelper, H4 } from 'ui'
 import { useUsers } from 'hooks'
 import * as Yup from 'yup'
+import { Link } from 'react-router-dom'
+import { SIGN_IN } from 'routes'
 
 function RegisterUser () {
   const { fetching, saveUser, error } = useUsers()
@@ -85,15 +88,25 @@ function RegisterUser () {
   ]
 
   return (
-    <FormikHelper
-      initialValues={initialValues}
-      validation={validation}
-      submit={async values => await saveNewUser(values)}
-      fields={fields}
-      message={message}
-      page='signup'
-      fetching={fetching}
-    />
+    <>
+      <Grid container justify='center'>
+        <H4>Cadastro</H4>
+      </Grid>
+
+      <FormikHelper
+        initialValues={initialValues}
+        validation={validation}
+        submit={async values => await saveNewUser(values)}
+        fields={fields}
+        message={message}
+        page='signup'
+        fetching={fetching}
+      />
+
+      <Link to={SIGN_IN}>
+        Voltar paga login
+      </Link>
+    </>
   )
 }
 

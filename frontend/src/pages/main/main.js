@@ -1,6 +1,6 @@
 import React, { lazy, Suspense, useState } from 'react'
 import styled from 'styled-components'
-import { Switch, Route } from 'react-router'
+import { Switch, Route } from 'react-router-dom'
 import { LinearProgress } from '@material-ui/core'
 import { Snackbar } from 'ui'
 import Header from 'pages/header'
@@ -34,11 +34,11 @@ function Main () {
       <MainContainer>
         <Suspense fallback={<LinearProgress />}>
           <Switch>
-            <Route path={HOME} component={Catalogue} />
             <Route path={INVENTARY} component={Inventary} />
             <Route path={SUBSCRIPTIONS} component={Subscription} />
             <Route path={PERFIL} component={Perfil} />
             <Route path={MANAGER} component={Manager} />
+            <Route path={HOME} exact component={Catalogue} />
           </Switch>
         </Suspense>
       </MainContainer>

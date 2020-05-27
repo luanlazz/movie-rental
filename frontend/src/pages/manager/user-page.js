@@ -25,7 +25,7 @@ function UserPage () {
     const getUsersManager = async () => {
       const res = await getUsers()
 
-      setUsers(res)
+      if (res) setUsers(res)
     }
 
     getUsersManager()

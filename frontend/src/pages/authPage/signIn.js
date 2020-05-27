@@ -1,16 +1,17 @@
 import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import { Redirect, NavLink } from 'react-router-dom'
 import {
   loginUser,
   validateToken,
   setFetching
 } from 'redux-flow/reducers/auth-user/action-creators'
 import { openSnackbar } from 'redux-flow/reducers/snackbars/action-creators'
-import { FormikHelper } from 'ui'
+import { FormikHelper, H4 } from 'ui'
 import * as Yup from 'yup'
-// import { HOME, SIGN_UP, FORGOT_PASSWORD } from 'routes'
-// import { Button } from '@material-ui/core'
+import { SIGN_UP, FORGOT_PASSWORD, HOME } from 'routes'
+import { Button, Grid } from '@material-ui/core'
 
 function SignIn ({ authUser, onSubmit, validateToken, setFetching, openSnackbarSignin }) {
   useEffect(() => {
@@ -27,14 +28,14 @@ function SignIn ({ authUser, onSubmit, validateToken, setFetching, openSnackbarS
     }
   }, [authUser, validateToken])
 
-  // if (authUser.validateToken) {
-  //   return <Redirect to={HOME} />
-  // }
-
   const submitForm = async (values) => {
     setFetching(true)
     await onSubmit(values)
     setFetching(false)
+  }
+
+  if (authUser.validateToken) {
+    return <Redirect to={HOME} />
   }
 
   const initialValues = {
@@ -68,6 +69,10 @@ function SignIn ({ authUser, onSubmit, validateToken, setFetching, openSnackbarS
 
   return (
     <>
+      <Grid container justify='center'>
+        <H4>Login</H4>
+      </Grid>
+
       <FormikHelper
         initialValues={initialValues}
         validation={validation}
@@ -81,13 +86,30 @@ function SignIn ({ authUser, onSubmit, validateToken, setFetching, openSnackbarS
         fetching={authUser.fetching}
       />
 
-      {/* <Button onClick={() => history.push(SIGN_UP)}>
-        <H6>Ainda não tem uma conta? crie uma aqui</H6>
-      </Button>
+      <Grid container justify='space-around'>
+        <Grid item>
+          <Button
+            variant='contained'
+          >
+            <NavLink
+              to={SIGN_UP}
+            >
+              Registre-se
+            </NavLink>
+          </Button>
 
-      <Button onClick={() => history.push(FORGOT_PASSWORD)}>
-        <H6>Esqueceu sua senha? clique aqui</H6>
-      </Button> */}
+          <Button
+            variant='contained'
+          >
+            <NavLink
+              to={FORGOT_PASSWORD}
+            >
+              Esqueceu sua senha? clique aqui
+            </NavLink>
+          </Button>
+
+        </Grid>
+      </Grid>
     </>
   )
 }

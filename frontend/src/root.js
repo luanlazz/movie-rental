@@ -2,15 +2,12 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { AppContainer } from 'react-hot-loader'
 import { ThemeProvider, createGlobalStyle } from 'styled-components'
-import { BrowserRouter, Route } from 'react-router-dom'
+import { CssBaseline, createMuiTheme, MuiThemeProvider } from '@material-ui/core'
 import { Provider } from 'react-redux'
-import {
-  CssBaseline,
-  createMuiTheme,
-  MuiThemeProvider
-} from '@material-ui/core'
+import { ConnectedRouter } from 'connected-react-router'
+import { Route } from 'react-router'
+import configureStore, { history } from 'redux-flow/configure-store'
 import { MovieProvider, UsersProvider } from 'contexts'
-import configureStore from 'redux-flow/configure-store'
 
 const store = configureStore()
 
@@ -55,9 +52,9 @@ const Root = ({ App }) => {
               <GlobalStyle />
 
               <Provider store={store}>
-                <BrowserRouter>
+                <ConnectedRouter history={history}>
                   <Route component={App} />
-                </BrowserRouter>
+                </ConnectedRouter>
               </Provider>
 
             </UsersProvider>
@@ -69,7 +66,7 @@ const Root = ({ App }) => {
 }
 
 Root.propTypes = {
-  App: PropTypes.object.isRequired
+  App: PropTypes.func
 }
 
 const GlobalStyle = createGlobalStyle`

@@ -2,7 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Route, Redirect } from 'react-router'
-// import history from './history'
 import { AUTH_PAGE } from 'routes'
 
 const PrivateRoute = ({ authUser, component: RouteComponent, ...props }) => {
@@ -10,7 +9,7 @@ const PrivateRoute = ({ authUser, component: RouteComponent, ...props }) => {
     <Route
       {...props}
       render={routeProps =>
-        !authUser.validateToken
+        authUser.validateToken
           ? <RouteComponent {...routeProps} />
           : <Redirect to={AUTH_PAGE} />}
     />
@@ -18,8 +17,8 @@ const PrivateRoute = ({ authUser, component: RouteComponent, ...props }) => {
 }
 
 PrivateRoute.propTypes = {
-  authUser: PropTypes.object,
-  component: PropTypes.node
+  authUser: PropTypes.object.isRequired,
+  component: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({

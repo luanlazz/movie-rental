@@ -67,9 +67,7 @@ function UserMaintance ({ handleCloseUserModal, openUserModal, userId, openSnack
     const getUserMaintance = async () => {
       const res = await getUser(userId)
 
-      if (res) {
-        setUser(res)
-      }
+      if (res) setUser(res)
     }
 
     getUserMaintance()
