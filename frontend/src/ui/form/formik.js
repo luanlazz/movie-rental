@@ -6,7 +6,6 @@ import {
   Form as FormMaterial
 } from 'formik'
 import {
-  Button,
   CircularProgress,
   Grid
 } from '@material-ui/core'
@@ -15,8 +14,9 @@ import {
   ContainerCenter,
   TextField
 } from 'ui'
+import ButtonsForm from './buttons'
 
-function FormikHandler ({ initialValues, validation, submit, fields, message, page, fetching, success, completed }) {
+function FormikHandler ({ initialValues, validation, submit, fields, message, page, fetching, success, completed, inputType, handleClose }) {
   return (
     <ContainerCenter>
       <Formik
@@ -68,17 +68,12 @@ function FormikHandler ({ initialValues, validation, submit, fields, message, pa
                 />
               ))}
 
-              <Grid item xs={8}>
-                {fetching && <CircularProgress />}
-                {!fetching && !success &&
-                  <Button
-                    type='submit'
-                    variant='contained'
-                    fullWidth
-                  >
-                    Enviar
-                  </Button>}
-              </Grid>
+              <ButtonsForm
+                inputType={inputType}
+                fetching={fetching}
+                success={success}
+                handleClose={handleClose}
+              />
             </Form>
           )
         }}
@@ -96,7 +91,9 @@ FormikHandler.propTypes = {
   page: PropTypes.string,
   fetching: PropTypes.bool,
   success: PropTypes.bool,
-  completed: PropTypes.number
+  completed: PropTypes.number,
+  inputType: PropTypes.string,
+  handleClose: PropTypes.func
 }
 
 const Form = styled(FormMaterial)`

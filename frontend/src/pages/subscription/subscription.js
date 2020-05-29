@@ -4,9 +4,9 @@ import {
   Grid
 } from '@material-ui/core'
 import {
-  ContentTitle,
-  H4
+  ContentTitle
 } from 'ui'
+import { H4 } from 'components'
 
 function Subscription () {
   return (

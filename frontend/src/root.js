@@ -31,6 +31,22 @@ const theme = createMuiTheme({
     // Used by `getContrastText()` to maximize the contrast between
     // the background and the text.
     contrastThreshold: 3,
+    danger: {
+      main: '#ff4444',
+      dark: '#cc0000'
+    },
+    info: {
+      main: '#33b5e5',
+      dark: '#0099cc'
+    },
+    success: {
+      main: '#00C851',
+      dark: '#007E33'
+    },
+    warning: {
+      main: '#ffbb33',
+      dark: '#FF8800'
+    },
     // Used by the functions below to shift a color's luminance by approximately
     // two indexes within its tonal palette.
     // E.g., shift from Red 500 to Red 300 or Red 700.

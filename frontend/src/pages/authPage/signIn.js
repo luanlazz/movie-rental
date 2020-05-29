@@ -8,10 +8,11 @@ import {
   setFetching
 } from 'redux-flow/reducers/auth-user/action-creators'
 import { openSnackbar } from 'redux-flow/reducers/snackbars/action-creators'
-import { FormikHelper, H4 } from 'ui'
+import { FormikHelper } from 'ui'
+import { H4, H6 } from 'components'
 import * as Yup from 'yup'
 import { SIGN_UP, FORGOT_PASSWORD, HOME } from 'routes'
-import { Button, Grid } from '@material-ui/core'
+import { Grid } from '@material-ui/core'
 
 function SignIn ({ authUser, onSubmit, validateToken, setFetching, openSnackbarSignin }) {
   useEffect(() => {
@@ -84,32 +85,16 @@ function SignIn ({ authUser, onSubmit, validateToken, setFetching, openSnackbarS
         }}
         page='signin'
         fetching={authUser.fetching}
+        inputType='submit'
       />
 
-      <Grid container justify='space-around'>
-        <Grid item>
-          <Button
-            variant='contained'
-          >
-            <NavLink
-              to={SIGN_UP}
-            >
-              Registre-se
-            </NavLink>
-          </Button>
+      <NavLink to={SIGN_UP}>
+        <H6>Ainda não tem uma conta? Registre-se aqui</H6>
+      </NavLink>
 
-          <Button
-            variant='contained'
-          >
-            <NavLink
-              to={FORGOT_PASSWORD}
-            >
-              Esqueceu sua senha? clique aqui
-            </NavLink>
-          </Button>
-
-        </Grid>
-      </Grid>
+      <NavLink to={FORGOT_PASSWORD}>
+        <H6>Esqueceu sua senha? clique aqui</H6>
+      </NavLink>
     </>
   )
 }

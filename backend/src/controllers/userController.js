@@ -66,6 +66,7 @@ module.exports = {
     await db('users')
       .select('userId', 'firstName', 'lastName', 'email', 'admin')
       .whereNull('deletedAt')
+      .orderBy('userId')
       .then(users => res.json(users))
       .catch(err => res.status(500).send(err))
   },

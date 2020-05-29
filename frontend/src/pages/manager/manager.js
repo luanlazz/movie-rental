@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react'
+import React, { Suspense, lazy } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { Link as MaterialLink, Route, Switch } from 'react-router-dom'
@@ -12,9 +12,11 @@ import {
   ContentTitle
 } from 'ui'
 import PersonPinIcon from '@material-ui/icons/PersonPin'
+import MovieIcon from '@material-ui/icons/Movie'
+import CategoryIcon from '@material-ui/icons/Category'
 import { MANAGER_USERS, MANAGER_FILMS, MANAGER_CATEGORIES } from 'routes'
 
-const UserPage = React.lazy(() => import('./user-page'))
+const UserPage = lazy(() => import('./users/user-page'))
 
 function Manager () {
   return (
@@ -37,14 +39,14 @@ function Manager () {
               to={MANAGER_FILMS}
               description='Filmes'
             >
-              <PersonPinIcon fontSize='large' />
+              <MovieIcon fontSize='large' />
             </ButtonMaintance>
 
             <ButtonMaintance
               to={MANAGER_CATEGORIES}
               description='Categorias'
             >
-              <PersonPinIcon fontSize='large' />
+              <CategoryIcon fontSize='large' />
             </ButtonMaintance>
 
           </GridButtons>

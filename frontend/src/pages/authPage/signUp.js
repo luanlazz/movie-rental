@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Grid } from '@material-ui/core'
-import { FormikHelper, H4 } from 'ui'
+import { FormikHelper } from 'ui'
+import { H4 } from 'components'
 import { useUsers } from 'hooks'
 import * as Yup from 'yup'
 import { Link } from 'react-router-dom'
@@ -101,6 +102,7 @@ function RegisterUser () {
         message={message}
         page='signup'
         fetching={fetching}
+        inputType='submit'
       />
 
       <Link to={SIGN_IN}>

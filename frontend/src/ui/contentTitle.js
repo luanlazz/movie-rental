@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { Grid } from '@material-ui/core'
-import { H3 } from './title'
+import { H3 } from 'components/title'
 
 function contentTitle ({ title }) {
   return (

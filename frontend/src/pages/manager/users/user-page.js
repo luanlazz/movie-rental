@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 import {
   IconButton,
   LinearProgress,
@@ -13,13 +15,16 @@ import {
 import DeleteIcon from '@material-ui/icons/Delete'
 import EditIcon from '@material-ui/icons/Edit'
 import { useUsers } from 'hooks'
+import { openSnackbar } from 'redux-flow/reducers/snackbars/action-creators'
+import { ModalConfirm } from 'components'
 import UserMaintance from './user-maintance'
 
-function UserPage () {
-  const { getUsers, fetching } = useUsers()
+function UserPage ({ openSnackbarUser }) {
+  const { getUsers, saveUser, deleteUser, fetching } = useUsers()
   const [users, setUsers] = useState([])
   const [userId, setUserId] = useState(0)
   const [openUserModal, setOpenUserModal] = useState(false)
+  const [openUserConfirm, setOpenUserConfirm] = useState(false)
 
   useEffect(() => {
     const getUsersManager = async () => {
@@ -29,15 +34,34 @@ function UserPage () {
     }
 
     getUsersManager()
-  }, [openUserModal])
+  }, [openUserModal, openUserConfirm])
 
   async function handleUpdate (userId) {
     setUserId(userId)
     handleOpenUserModal()
   }
 
-  function handleDelete (userId) {
-    console.log('delete user', userId)
+  const handleSaveUser = async (values) => {
+    const res = await saveUser(values)
+
+    if (res) {
+      openSnackbarUser('Alterações salvas com sucesso!', 'success')
+      handleCloseUserModal()
+    }
+  }
+
+  const handleDelete = async (userId) => {
+    setUserId(userId)
+    handleOpenUserConfirm()
+  }
+
+  const handleConfirmDelete = async () => {
+    const res = await deleteUser(userId)
+
+    if (res) {
+      openSnackbarUser('Usuário removido com sucesso!', 'success')
+      handleCloseUserConfirm()
+    }
   }
 
   const handleOpenUserModal = () => {
@@ -48,6 +72,14 @@ function UserPage () {
     setOpenUserModal(false)
   }
 
+  const handleOpenUserConfirm = () => {
+    setOpenUserConfirm(true)
+  }
+
+  const handleCloseUserConfirm = () => {
+    setOpenUserConfirm(false)
+  }
+
   return (
     <>
       {fetching && <LinearProgress />}
@@ -56,6 +88,14 @@ function UserPage () {
         handleCloseUserModal={handleCloseUserModal}
         openUserModal={openUserModal}
         userId={userId}
+        handleSaveUser={handleSaveUser}
+      />
+
+      <ModalConfirm
+        openUserConfirm={openUserConfirm}
+        handleCloseUserConfirm={handleCloseUserConfirm}
+        handleConfirmDelete={handleConfirmDelete}
+        fetching={fetching}
       />
 
       <TableContainer component={Paper}>
@@ -95,4 +135,14 @@ function UserPage () {
   )
 }
 
-export default UserPage
+UserPage.propTypes = {
+  openSnackbarUser: PropTypes.func.isRequired
+}
+
+const mapDispatchToProps = (dispatch) => ({
+  openSnackbarUser: (message, severity) => {
+    dispatch(openSnackbar(message, severity))
+  }
+})
+
+export default connect(null, mapDispatchToProps)(UserPage)

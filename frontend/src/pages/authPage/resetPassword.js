@@ -98,6 +98,7 @@ function ResetPassword ({ location }) {
       page='reset-password'
       fetching={fetching}
       success={success}
+      inputType='submit'
     />
   )
 }

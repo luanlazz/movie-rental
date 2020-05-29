@@ -31,10 +31,10 @@ function UsersProvider ({ children }) {
     }
   }
 
-  async function getUser (id) {
+  async function getUser (userId) {
     try {
       setFetching(true)
-      const res = await api.get(`/users/${id}`)
+      const res = await api.get(`/users/${userId}`)
       setFetching(false)
 
       return res.data
@@ -54,7 +54,21 @@ function UsersProvider ({ children }) {
 
       return res.status === 204
     } catch (error) {
-      console.log('resposta save', error.response.data)
+      handleError(error.response.data)
+      setFetching(false)
+    }
+  }
+
+  async function deleteUser (userId) {
+    try {
+      const url = `/users/${userId}`
+
+      setFetching(true)
+      const res = await api.delete(url, userId)
+      setFetching(false)
+
+      return res.status === 204
+    } catch (error) {
       handleError(error.response.data)
       setFetching(false)
     }
@@ -91,6 +105,7 @@ function UsersProvider ({ children }) {
       getUsers,
       getUser,
       saveUser,
+      deleteUser,
       forgotPassword,
       resetPassword,
       fetching,

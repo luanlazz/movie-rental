@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { FormikHelper, H4 } from 'ui'
+import { FormikHelper } from 'ui'
+import { H4 } from 'components'
 import * as Yup from 'yup'
 import { useUsers } from 'hooks'
 import { Grid } from '@material-ui/core'
+import { Link } from 'react-router-dom'
+import { SIGN_IN } from 'routes'
 
 function ForgotPassword () {
   const { fetching, forgotPassword, error } = useUsers()
@@ -64,8 +67,12 @@ function ForgotPassword () {
         page='forgot-password'
         fetching={fetching}
         success={success}
+        inputType='submit'
       />
 
+      <Link to={SIGN_IN}>
+        Voltar paga login
+      </Link>
     </>
   )
 }
