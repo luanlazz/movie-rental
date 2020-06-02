@@ -8,8 +8,8 @@ import {
 } from '@material-ui/core'
 import MenuIcon from '@material-ui/icons/Menu'
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart'
+import { NavLinkHandle } from 'components'
 import { Logo } from 'ui'
-import { Link as MaterialLink } from 'react-router-dom'
 import { HOME } from 'routes'
 
 function Header ({ handleDrawerOpen }) {
@@ -20,9 +20,9 @@ function Header ({ handleDrawerOpen }) {
           <MenuIcon />
         </IconButton>
 
-        <Link to={HOME}>
+        <NavLinkHandle to={HOME}>
           <Logo />
-        </Link>
+        </NavLinkHandle>
 
         <IconButton>
           <ShoppingCartIcon />
@@ -38,7 +38,8 @@ Header.propTypes = {
 
 const Toolbar = styled(MaterialToolbar)`
   && {
-    border-bottom: 0.2rem solid ${({ theme }) => theme.palette.secondary.main};
+    background: ${({ theme }) => theme.palette.grey[800]};
+    border-bottom: 0.2rem solid ${({ theme }) => theme.palette.primary.main};
     display: flex;
     justify-content: space-between;
   }
@@ -46,12 +47,6 @@ const Toolbar = styled(MaterialToolbar)`
 
 const IconButton = styled(MaterialIconButton)`
   color: ${({ theme }) => theme.palette.common.white};
-`
-
-const Link = styled(MaterialLink)`
-  && {
-    text-decoration: none;
-  }
 `
 
 export default Header

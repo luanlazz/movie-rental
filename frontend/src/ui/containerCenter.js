@@ -18,11 +18,10 @@ ContainerCenter.propTypes = {
 const GridContainer = styled(Grid).attrs({
   container: true,
   justify: 'center',
-  align: 'center',
-  spacing: 2
+  align: 'center'
 })`
   && {
-    padding: ${({ theme }) => theme.spacing(3)}px;
+    padding: ${({ theme }) => theme.spacing(2)}px;
   }
 `
 

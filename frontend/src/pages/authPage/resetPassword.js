@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { Redirect } from 'react-router-dom'
-import * as Yup from 'yup'
+import {
+  CircularProgress,
+  Grid,
+  Button
+} from '@material-ui/core'
+import Alert from '@material-ui/lab/Alert'
 import { FormikHelper } from 'ui'
+import * as Yup from 'yup'
 import { useUsers } from 'hooks'
 import { AUTH_PAGE } from 'routes'
 
@@ -89,17 +95,40 @@ function ResetPassword ({ location }) {
   ]
 
   return (
-    <FormikHelper
-      initialValues={initialValues}
-      validation={validation}
-      submit={async values => await submitResetPassword(values)}
-      fields={fields}
-      message={message}
-      page='reset-password'
-      fetching={fetching}
-      success={success}
-      inputType='submit'
-    />
+    <>
+      <Grid container alignItems='center'>
+        <Grid item xs={!success ? 12 : 10}>
+          {!!message.msg && (
+            <Alert severity={message.severity}>
+              {message.msg}
+            </Alert>
+          )}
+        </Grid>
+        <Grid item xs={2}>
+          {success && <CircularProgress variant='static' value={completed} />}
+        </Grid>
+      </Grid>
+
+      <FormikHelper
+        initialValues={initialValues}
+        validation={validation}
+        submit={async values => await submitResetPassword(values)}
+        fields={fields}
+        page='reset-password'
+      />
+
+      {!fetching && !success &&
+        <Grid container xs={8}>
+          {fetching && <CircularProgress />}
+          <Button
+            type='submit'
+            variant='contained'
+            fullWidth
+          >
+            Confirmar nova senha
+          </Button>
+        </Grid>}
+    </>
   )
 }
 

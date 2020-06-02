@@ -9,9 +9,9 @@ function TextField ({ xs, ...props }) {
   return (
     <Grid item xs={xs}>
       <MaterialTextField
+        {...props}
         variant='standard'
         fullWidth
-        {...props}
       />
     </Grid>
   )

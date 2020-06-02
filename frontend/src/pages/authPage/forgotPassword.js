@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react'
+import styled from 'styled-components'
 import { FormikHelper } from 'ui'
-import { H4 } from 'components'
 import * as Yup from 'yup'
 import { useUsers } from 'hooks'
-import { Grid } from '@material-ui/core'
-import { Link } from 'react-router-dom'
+import {
+  CircularProgress,
+  Grid,
+  Typography
+} from '@material-ui/core'
+import Alert from '@material-ui/lab/Alert'
 import { SIGN_IN } from 'routes'
+import { ButtonHandle, NavLinkHandle } from 'components'
 
 function ForgotPassword () {
   const { fetching, forgotPassword, error } = useUsers()
@@ -54,8 +59,14 @@ function ForgotPassword () {
 
   return (
     <>
-      <Grid container justify='center'>
-        <H4>Recuperar senha</H4>
+      <Grid container alignItems='center'>
+        <Grid item xs={12}>
+          {!!message.msg && (
+            <Alert severity={message.severity}>
+              {message.msg}
+            </Alert>
+          )}
+        </Grid>
       </Grid>
 
       <FormikHelper
@@ -63,18 +74,37 @@ function ForgotPassword () {
         validation={validation}
         submit={async values => handleSubmitForgotPassword(values)}
         fields={fields}
-        message={message}
         page='forgot-password'
-        fetching={fetching}
-        success={success}
-        inputType='submit'
       />
 
-      <Link to={SIGN_IN}>
-        Voltar paga login
-      </Link>
+      <Grid container alignItems='center'>
+        {fetching && <CircularProgress />}
+        <ButtonHandle
+          variant='contained'
+          className='submit'
+          disabled={fetching || success}
+        >
+          Resetar senha
+        </ButtonHandle>
+
+        <ButtonsText>
+          ou
+        </ButtonsText>
+
+        <ButtonHandle variant='text'>
+          <NavLinkHandle to={SIGN_IN}>
+            login
+          </NavLinkHandle>
+        </ButtonHandle>
+      </Grid>
     </>
   )
 }
+
+const ButtonsText = styled(Typography)`
+  && {
+    padding: 10px;
+  }
+`
 
 export default ForgotPassword

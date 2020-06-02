@@ -13,7 +13,7 @@ function Logo () {
 const LogoApp = styled(Typography)`
   && {
     animation: neon 2s infinite alternate;
-    color: ${({ theme }) => theme.palette.secondary.main};
+    color: ${({ theme }) => theme.palette.primary.main};
     font-size : 3rem;
     font-family: 'Pacifico', cursive;
     line-height: 5rem;

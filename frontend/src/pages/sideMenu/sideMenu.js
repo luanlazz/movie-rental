@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
-import t from 'prop-types'
+import React from 'react'
+import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { connect } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import {
   Avatar as MaterialAvatar,
   Drawer,
@@ -21,12 +21,6 @@ import {
 import { HOME, SUBSCRIPTIONS, INVENTARY, MANAGER, PERFIL } from 'routes'
 
 function SideMenu ({ authUser, logout, open, handleDrawerOpen }) {
-  const [currentPage, setCurrentPage] = useState('shop')
-
-  function handleCurrentPage (value) {
-    setCurrentPage(value)
-  }
-
   return (
     <Drawer
       open={open}
@@ -58,13 +52,13 @@ function SideMenu ({ authUser, logout, open, handleDrawerOpen }) {
               {[
                 {
                   value: 'account',
-                  component: Link,
+                  component: NavLink,
                   to: PERFIL,
                   children: <AccountCircle fontSize='small' />
                 },
                 {
                   value: 'manager',
-                  component: Link,
+                  component: NavLink,
                   to: MANAGER,
                   children: <SettingsIcon fontSize='small' />
                 },
@@ -77,14 +71,7 @@ function SideMenu ({ authUser, logout, open, handleDrawerOpen }) {
                 <IconButton
                   {...button}
                   key={button.value}
-                  selected={(currentPage === button.value)}
-                  onClick={() => {
-                    if (button.onClick) {
-                      button.onClick()
-                    } else {
-                      handleCurrentPage(button.value)
-                    }
-                  }}
+                  onClick={() => button.onClick && button.onClick()}
                 >
                   {button.children}
                 </IconButton>
@@ -114,10 +101,6 @@ function SideMenu ({ authUser, logout, open, handleDrawerOpen }) {
             <LinkMenu
               {...component}
               key={component.value}
-              selected={(currentPage === component.value)}
-              onClick={() => {
-                handleCurrentPage(component.value)
-              }}
             >
               {component.children}
             </LinkMenu>
@@ -129,10 +112,10 @@ function SideMenu ({ authUser, logout, open, handleDrawerOpen }) {
 }
 
 SideMenu.propTypes = {
-  authUser: t.object.isRequired,
-  logout: t.func.isRequired,
-  open: t.bool.isRequired,
-  handleDrawerOpen: t.func.isRequired
+  authUser: PropTypes.object.isRequired,
+  logout: PropTypes.func.isRequired,
+  open: PropTypes.bool.isRequired,
+  handleDrawerOpen: PropTypes.func.isRequired
 }
 
 const ToggleButton = styled.div`
@@ -141,7 +124,7 @@ const ToggleButton = styled.div`
 `
 
 const Content = styled.div`
-  background-color: ${({ theme }) => theme.palette.primary.light};
+  background: ${({ theme }) => theme.palette.grey[800]};
   min-height: 100%;
 `
 
@@ -188,17 +171,7 @@ const UserName = styled(Grid).attrs({
 
 const IconButton = styled(MaterialIconButton)`
   && {
-    color: ${({ selected, theme }) => (selected
-      ? theme.palette.secondary.light
-      : theme.palette.common.white
-    )};
-    transform: ${({ selected }) => (selected ? 'scale(1.2)' : 'scale(1.0)')};
-    transition: 500ms;
 
-    :hover {
-      color: ${({ theme }) => theme.palette.secondary.light};
-      transform: scale(1.2);
-    }
   }
 `
 
@@ -214,7 +187,15 @@ const MenuLinksContainer = styled(Grid).attrs({
 
 function LinkMenu ({ children, ...props }) {
   return (
-    <LinkItem {...props}>
+    <LinkItem
+      {...props}
+      isActive={(match, location) => {
+        if (!match) {
+          return false
+        }
+        return match.isExact && match.path && location.pathname
+      }}
+    >
       <Grid item>
         <Typography variant='h5'>
           {children}
@@ -225,26 +206,28 @@ function LinkMenu ({ children, ...props }) {
 }
 
 LinkMenu.propTypes = {
-  children: t.node
+  children: PropTypes.node
 }
 
-const LinkItem = styled(Link)`
+const activeClassName = 'nav-item-active'
+
+const LinkItem = styled(NavLink).attrs({ activeClassName })`
   && {
-    color: ${({ selected, theme }) => (selected
-      ? theme.palette.secondary.light
-      : theme.palette.common.white
-    )};
+    color: ${({ theme }) => theme.palette.common.white};
     margin: auto;
     text-align: center;
     text-decoration: none;
     transition: 500ms;
-    transform: ${({ selected }) => (selected ? 'scale(1.1)' : 'scale(1.0)')};
     width: 100%;
 
     :hover {
-      color: ${({ theme }) => theme.palette.secondary.light};
+      color: ${({ theme }) => theme.palette.primary.light};
       transform: scale(1.1);
     }
+  }
+
+  &.${activeClassName} {
+    color: ${({ theme }) => theme.palette.primary.light};
   }
 `
 

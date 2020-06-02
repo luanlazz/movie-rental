@@ -18,15 +18,15 @@ const theme = createMuiTheme({
   palette: {
     primary: {
       // light: will be calculated from palette.primary.main,
-      main: '#303030'
+      main: '#c20303',
       // dark: will be calculated from palette.primary.main,
       // contrastText: will be calculated to contrast with palette.primary.main
+      contrastText: '#fff'
     },
     secondary: {
       // light: will be calculated from palette.secondary.main,
-      main: '#c20303',
+      main: '#303030'
       // dark: will be calculated from palette.secondary.main,
-      contrastText: '#ffcc00'
     },
     // Used by `getContrastText()` to maximize the contrast between
     // the background and the text.
@@ -34,6 +34,20 @@ const theme = createMuiTheme({
     danger: {
       main: '#ff4444',
       dark: '#cc0000'
+    },
+    button: {
+      primary: {
+        main: '#4285F4',
+        dark: '#0d47a1'
+      },
+      secondary: {
+        main: '#aa66cc',
+        dark: '#9933CC'
+      },
+      default: {
+        main: '#2BBBAD',
+        dark: '#00695c'
+      }
     },
     info: {
       main: '#33b5e5',
@@ -87,9 +101,10 @@ Root.propTypes = {
 
 const GlobalStyle = createGlobalStyle`
   #root {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
   }
 `
 

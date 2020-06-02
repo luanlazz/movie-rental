@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
+import styled from 'styled-components'
 import { connect } from 'react-redux'
-import { Redirect, NavLink } from 'react-router-dom'
+import { Redirect } from 'react-router-dom'
 import {
   loginUser,
   validateToken,
@@ -9,12 +10,16 @@ import {
 } from 'redux-flow/reducers/auth-user/action-creators'
 import { openSnackbar } from 'redux-flow/reducers/snackbars/action-creators'
 import { FormikHelper } from 'ui'
-import { H4, H6 } from 'components'
 import * as Yup from 'yup'
 import { SIGN_UP, FORGOT_PASSWORD, HOME } from 'routes'
-import { Grid } from '@material-ui/core'
+import { Grid, Button, CircularProgress, Typography } from '@material-ui/core'
+import Alert from '@material-ui/lab/Alert'
+import ButtonHandle from 'components/button'
+import { NavLinkHandle } from 'components'
 
 function SignIn ({ authUser, onSubmit, validateToken, setFetching, openSnackbarSignin }) {
+  const formRef = React.useRef(null)
+
   useEffect(() => {
     const validate = async () => {
       const res = await validateToken(authUser)
@@ -29,7 +34,7 @@ function SignIn ({ authUser, onSubmit, validateToken, setFetching, openSnackbarS
     }
   }, [authUser, validateToken])
 
-  const submitForm = async (values) => {
+  const handleSubmitForm = async (values) => {
     setFetching(true)
     await onSubmit(values)
     setFetching(false)
@@ -68,33 +73,64 @@ function SignIn ({ authUser, onSubmit, validateToken, setFetching, openSnackbarS
     }
   ]
 
+  const submitFormRemotely = () => {
+    if (formRef.current) formRef.current.submitForm()
+  }
+
+  // const resetFormRemotely = () => {
+  //   if (formRef.current) formRef.current.resetForm()
+  // }
+
   return (
     <>
-      <Grid container justify='center'>
-        <H4>Login</H4>
+      <Grid container alignItems='center'>
+        <Grid item xs={12}>
+          {!!authUser.message && (
+            <Alert severity='error'>
+              {authUser.message}
+            </Alert>
+          )}
+        </Grid>
       </Grid>
 
       <FormikHelper
         initialValues={initialValues}
         validation={validation}
-        submit={async values => await submitForm(values)}
+        submit={async values => await handleSubmitForm(values)}
         fields={fields}
-        message={{
-          msg: authUser.message,
-          severity: 'error'
-        }}
         page='signin'
-        fetching={authUser.fetching}
-        inputType='submit'
+        innerRef={formRef}
       />
 
-      <NavLink to={SIGN_UP}>
-        <H6>Ainda não tem uma conta? Registre-se aqui</H6>
-      </NavLink>
+      <Grid container alignItems='center'>
+        {authUser.fetching && <CircularProgress />}
+        <ButtonHandle
+          onClick={submitFormRemotely}
+          variant='contained'
+          className='submit'
+          disabled={authUser.fetching}
+        >
+          Entrar
+        </ButtonHandle>
 
-      <NavLink to={FORGOT_PASSWORD}>
-        <H6>Esqueceu sua senha? clique aqui</H6>
-      </NavLink>
+        <ButtonsText>
+          ou
+        </ButtonsText>
+
+        <ButtonHandle variant='text'>
+          <NavLinkHandle to={SIGN_UP}>
+            Registrar
+          </NavLinkHandle>
+        </ButtonHandle>
+      </Grid>
+
+      <Grid container>
+        <Button variant='text'>
+          <NavLinkHandle to={FORGOT_PASSWORD}>
+            Recuperar Senha
+          </NavLinkHandle>
+        </Button>
+      </Grid>
     </>
   )
 }
@@ -106,6 +142,12 @@ SignIn.propTypes = {
   setFetching: PropTypes.func.isRequired,
   openSnackbarSignin: PropTypes.func.isRequired
 }
+
+const ButtonsText = styled(Typography)`
+  && {
+    padding: 10px;
+  }
+`
 
 const mapStateToProps = state => ({
   authUser: state.authUser

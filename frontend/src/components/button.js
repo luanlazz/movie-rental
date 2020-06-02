@@ -1,6 +1,20 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { Button } from '@material-ui/core'
+
+const ButtonHandle = ({ className, onClick, children, props }) => (
+  <ButtonComponent className={className} onClick={onClick} {...props}>
+    {children}
+  </ButtonComponent>
+)
+
+ButtonHandle.propTypes = {
+  className: PropTypes.string,
+  onClick: PropTypes.func,
+  props: PropTypes.object,
+  children: PropTypes.node
+}
 
 const ButtonComponent = styled(Button).attrs({
 })`
@@ -15,7 +29,7 @@ const ButtonComponent = styled(Button).attrs({
   }
 
   &.submit {
-    background-color: ${({ theme }) => theme.palette.primary.light};
+    background-color: ${({ theme }) => theme.palette.button.primary.main};
   }
 
   &.secondary {
@@ -23,9 +37,4 @@ const ButtonComponent = styled(Button).attrs({
   }
 `
 
-export const ButtonDanger = (props) => <ButtonComponent className='danger' {...props} />
-export const ButtonSuccess = (props) => <ButtonComponent className='success' {...props} />
-export const ButtonSubmit = (props) => <ButtonComponent className='submit' {...props} />
-export const ButtonSecondary = (props) => <ButtonComponent className='secondary' {...props} />
-
-export default Button
+export default ButtonHandle

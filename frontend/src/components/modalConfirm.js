@@ -10,7 +10,7 @@ import {
   Paper,
   CircularProgress
 } from '@material-ui/core'
-import { ButtonDanger, ButtonSuccess } from './button'
+import ButtonHandle from './button'
 import { H4 } from './title'
 
 const useStyles = makeStyles((theme) => ({
@@ -49,24 +49,26 @@ function ModalConfirm ({ openUserConfirm, handleCloseUserConfirm, handleConfirmD
 
             <GridButtons>
               <GridButton item xs={6}>
-                <ButtonDanger
+                <ButtonHandle
                   variant='contained'
+                  className='danger'
                   onClick={() => handleCloseUserConfirm()}
                   fullWidth
                 >
                   Cancelar
-                </ButtonDanger>
+                </ButtonHandle>
               </GridButton>
 
               <GridButton item xs={6}>
                 {fetching && <CircularProgress />}
-                <ButtonSuccess
+                <ButtonHandle
                   variant='contained'
+                  className='success'
                   onClick={handleConfirmDelete}
                   fullWidth
                 >
                   Confirmar
-                </ButtonSuccess>
+                </ButtonHandle>
               </GridButton>
             </GridButtons>
           </Paper>

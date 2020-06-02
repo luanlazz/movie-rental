@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { Grid } from '@material-ui/core'
+import styled from 'styled-components'
+import { Grid, CircularProgress, Typography } from '@material-ui/core'
 import { FormikHelper } from 'ui'
-import { H4 } from 'components'
 import { useUsers } from 'hooks'
 import * as Yup from 'yup'
-import { Link } from 'react-router-dom'
 import { SIGN_IN } from 'routes'
+import Alert from '@material-ui/lab/Alert'
+import { ButtonHandle, NavLinkHandle } from 'components'
 
 function RegisterUser () {
   const { fetching, saveUser, error } = useUsers()
@@ -90,8 +91,14 @@ function RegisterUser () {
 
   return (
     <>
-      <Grid container justify='center'>
-        <H4>Cadastro</H4>
+      <Grid container alignItems='center'>
+        <Grid item xs={12}>
+          {!!message.msg && (
+            <Alert severity={message.severity}>
+              {message.msg}
+            </Alert>
+          )}
+        </Grid>
       </Grid>
 
       <FormikHelper
@@ -99,17 +106,37 @@ function RegisterUser () {
         validation={validation}
         submit={async values => await saveNewUser(values)}
         fields={fields}
-        message={message}
         page='signup'
-        fetching={fetching}
-        inputType='submit'
       />
 
-      <Link to={SIGN_IN}>
-        Voltar paga login
-      </Link>
+      <Grid container alignItems='center'>
+        {fetching && <CircularProgress />}
+        <ButtonHandle
+          variant='contained'
+          className='submit'
+          disabled={fetching}
+        >
+          Cadastrar
+        </ButtonHandle>
+
+        <ButtonsText>
+          ou
+        </ButtonsText>
+
+        <ButtonHandle variant='text'>
+          <NavLinkHandle to={SIGN_IN}>
+            login
+          </NavLinkHandle>
+        </ButtonHandle>
+      </Grid>
     </>
   )
 }
+
+const ButtonsText = styled(Typography)`
+  && {
+    padding: 10px;
+  }
+`
 
 export default RegisterUser
