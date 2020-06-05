@@ -49,7 +49,7 @@ function Main () {
 const MainContainer = styled.main`
   background-color: ${({ theme }) => theme.palette.grey[300]};
   display: block;
-  flex-grow: 1;
+  min-height: 100vh;
 `
 
 export default Main

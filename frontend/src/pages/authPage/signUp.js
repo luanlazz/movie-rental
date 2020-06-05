@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { Grid, CircularProgress, Typography } from '@material-ui/core'
 import { FormikHelper } from 'ui'
@@ -9,6 +9,7 @@ import Alert from '@material-ui/lab/Alert'
 import { ButtonHandle, NavLinkHandle } from 'components'
 
 function RegisterUser () {
+  const formRef = useRef(null)
   const { fetching, saveUser, error } = useUsers()
   const [message, setMessage] = useState({
     msg: '',
@@ -30,6 +31,10 @@ function RegisterUser () {
         severity: 'success'
       })
     }
+  }
+
+  const submitFormRemotely = () => {
+    if (formRef.current) formRef.current.submitForm()
   }
 
   const initialValues = {
@@ -102,6 +107,7 @@ function RegisterUser () {
       </Grid>
 
       <FormikHelper
+        innerRef={formRef}
         initialValues={initialValues}
         validation={validation}
         submit={async values => await saveNewUser(values)}
@@ -112,6 +118,7 @@ function RegisterUser () {
       <Grid container alignItems='center'>
         {fetching && <CircularProgress />}
         <ButtonHandle
+          onClick={submitFormRemotely}
           variant='contained'
           className='submit'
           disabled={fetching}

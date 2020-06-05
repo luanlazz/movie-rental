@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
+import styled from 'styled-components'
 import { connect } from 'react-redux'
 import {
   IconButton,
@@ -10,13 +11,15 @@ import {
   TableRow,
   TableHead,
   TableCell,
-  TableBody
+  TableBody,
+  Grid
 } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 import EditIcon from '@material-ui/icons/Edit'
+import AddIcon from '@material-ui/icons/Add'
 import { useUsers } from 'hooks'
 import { openSnackbar } from 'redux-flow/reducers/snackbars/action-creators'
-import { ModalConfirm } from 'components'
+import { ModalConfirm, ButtonHandle } from 'components'
 import UserMaintance from './user-maintance'
 
 function UserPage ({ openSnackbarUser }) {
@@ -38,6 +41,10 @@ function UserPage ({ openSnackbarUser }) {
 
   async function handleUpdate (userId) {
     setUserId(userId)
+    handleOpenUserModal()
+  }
+
+  async function handleNewUser () {
     handleOpenUserModal()
   }
 
@@ -98,6 +105,18 @@ function UserPage ({ openSnackbarUser }) {
         fetching={fetching}
       />
 
+      <GridPageActions>
+        <Grid item>
+          <ButtonHandle
+            variant='contained'
+            className='success'
+            onClick={handleNewUser}
+          >
+            <AddIcon />Adicionar usuário
+          </ButtonHandle>
+        </Grid>
+      </GridPageActions>
+
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -138,6 +157,14 @@ function UserPage ({ openSnackbarUser }) {
 UserPage.propTypes = {
   openSnackbarUser: PropTypes.func.isRequired
 }
+
+const GridPageActions = styled(Grid).attrs({
+  container: true
+})`
+  && {
+    padding-bottom: ${({ theme }) => theme.spacing(3)}px;
+  }
+`
 
 const mapDispatchToProps = (dispatch) => ({
   openSnackbarUser: (message, severity) => {

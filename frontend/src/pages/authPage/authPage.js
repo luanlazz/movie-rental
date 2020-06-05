@@ -57,7 +57,7 @@ const AuthContainer = styled.div`
   background: ${({ theme }) => theme.palette.grey[800]};
   display: flex;
   justify-content: center;
-  min-height: 100%;
+  min-height: 100vh;
   min-width: 100%;
 `
 

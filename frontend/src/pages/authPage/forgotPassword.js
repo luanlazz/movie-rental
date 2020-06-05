@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { FormikHelper } from 'ui'
 import * as Yup from 'yup'
@@ -13,6 +13,7 @@ import { SIGN_IN } from 'routes'
 import { ButtonHandle, NavLinkHandle } from 'components'
 
 function ForgotPassword () {
+  const formRef = useRef(null)
   const { fetching, forgotPassword, error } = useUsers()
   const [success, setSuccess] = useState(false)
   const [message, setMessage] = useState({
@@ -36,6 +37,10 @@ function ForgotPassword () {
       })
       setSuccess(true)
     }
+  }
+
+  const submitFormRemotely = () => {
+    if (formRef.current) formRef.current.submitForm()
   }
 
   const initialValues = {
@@ -70,6 +75,7 @@ function ForgotPassword () {
       </Grid>
 
       <FormikHelper
+        innerRef={formRef}
         initialValues={initialValues}
         validation={validation}
         submit={async values => handleSubmitForgotPassword(values)}
@@ -80,6 +86,7 @@ function ForgotPassword () {
       <Grid container alignItems='center'>
         {fetching && <CircularProgress />}
         <ButtonHandle
+          onClick={submitFormRemotely}
           variant='contained'
           className='submit'
           disabled={fetching || success}

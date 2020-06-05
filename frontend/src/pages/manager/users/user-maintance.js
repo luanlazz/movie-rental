@@ -1,16 +1,19 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
+import styled from 'styled-components'
 import { makeStyles } from '@material-ui/core/styles'
 import {
   Backdrop,
   Fade,
   Modal,
-  Paper
+  Paper,
+  Grid,
+  CircularProgress
 } from '@material-ui/core'
 import { FormikHelper } from 'ui'
 import * as Yup from 'yup'
 import { useUsers } from 'hooks'
-import { H4 } from 'components'
+import { H4, ButtonHandle } from 'components'
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -35,6 +38,7 @@ const initialState = {
 }
 
 function UserMaintance ({ handleCloseUserModal, openUserModal, userId, handleSaveUser }) {
+  const formRef = useRef(null)
   const { fetching, getUser, error } = useUsers()
   const [message, setMessage] = useState({
     msg: '',
@@ -74,8 +78,13 @@ function UserMaintance ({ handleCloseUserModal, openUserModal, userId, handleSav
     email: Yup.string()
       .email('Endereço de email invalido')
       .required('Obrigatorio'),
+    password: Yup.string()
+      .min(5, 'Senha deve conter ao menos 5 caracteres')
+      .required('Obrigatório'),
+    confPassword: Yup.string()
+      .min(5, 'Senha deve conter ao menos 5 caracteres')
+      .required('Obrigatório'),
     admin: Yup.boolean()
-      .required('Obrigatório')
   })
 
   const fields = [
@@ -96,11 +105,27 @@ function UserMaintance ({ handleCloseUserModal, openUserModal, userId, handleSav
       type: 'email'
     },
     {
+      label: 'Senha',
+      xs: 12,
+      name: 'password',
+      type: 'password'
+    },
+    {
+      label: 'Confirme a senha',
+      xs: 12,
+      name: 'confPassword',
+      type: 'password'
+    },
+    {
       label: 'Admin',
       xs: 12,
       name: 'admin'
     }
   ]
+
+  const submitFormRemotely = () => {
+    if (formRef.current) formRef.current.submitForm()
+  }
 
   return (
     <div>
@@ -119,7 +144,9 @@ function UserMaintance ({ handleCloseUserModal, openUserModal, userId, handleSav
         <Fade in={openUserModal}>
           <Paper className={classes.paper}>
             <H4>Alteração de dados</H4>
+
             <FormikHelper
+              innerRef={formRef}
               initialValues={user}
               validation={validation}
               submit={async values => await handleSaveUser(values)}
@@ -130,6 +157,27 @@ function UserMaintance ({ handleCloseUserModal, openUserModal, userId, handleSav
               inputType='crud'
               handleClose={handleCancelMaintance}
             />
+
+            <GridActionsForm>
+              {fetching && <CircularProgress />}
+              <ButtonHandle
+                onClick={handleCancelMaintance}
+                variant='text'
+                className='danger'
+                disabled={fetching}
+              >
+                Cancelar
+              </ButtonHandle>
+
+              <ButtonHandle
+                onClick={submitFormRemotely}
+                variant='contained'
+                className='submit'
+                disabled={fetching}
+              >
+                Confirmar
+              </ButtonHandle>
+            </GridActionsForm>
           </Paper>
         </Fade>
       </Modal>
@@ -143,5 +191,14 @@ UserMaintance.propTypes = {
   userId: PropTypes.number,
   handleSaveUser: PropTypes.func
 }
+
+const GridActionsForm = styled(Grid).attrs({
+  container: true
+})`
+  && {
+    display: inline-flex;
+    justify-content: space-around;
+  }
+`
 
 export default UserMaintance

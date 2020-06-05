@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import PropTypes from 'prop-types'
 import { Redirect } from 'react-router-dom'
 import {
@@ -13,6 +13,7 @@ import { useUsers } from 'hooks'
 import { AUTH_PAGE } from 'routes'
 
 function ResetPassword ({ location }) {
+  const formRef = useRef(null)
   const { fetching, resetPassword, error } = useUsers()
   const [success, setSuccess] = useState(false)
   const [completed, setCompleted] = useState(0)
@@ -65,6 +66,10 @@ function ResetPassword ({ location }) {
     if (res) setSuccess(res)
   }
 
+  const submitFormRemotely = () => {
+    if (formRef.current) formRef.current.submitForm()
+  }
+
   const initialValues = {
     password: '',
     confPassword: ''
@@ -110,6 +115,7 @@ function ResetPassword ({ location }) {
       </Grid>
 
       <FormikHelper
+        innerRef={formRef}
         initialValues={initialValues}
         validation={validation}
         submit={async values => await submitResetPassword(values)}
@@ -118,9 +124,10 @@ function ResetPassword ({ location }) {
       />
 
       {!fetching && !success &&
-        <Grid container xs={8}>
+        <Grid container>
           {fetching && <CircularProgress />}
           <Button
+            onClick={submitFormRemotely}
             type='submit'
             variant='contained'
             fullWidth

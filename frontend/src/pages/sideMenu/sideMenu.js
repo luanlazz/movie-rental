@@ -1,8 +1,8 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import React, { useState } from 'react'
+import t from 'prop-types'
 import styled from 'styled-components'
 import { connect } from 'react-redux'
-import { NavLink } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import {
   Avatar as MaterialAvatar,
   Drawer,
@@ -21,6 +21,12 @@ import {
 import { HOME, SUBSCRIPTIONS, INVENTARY, MANAGER, PERFIL } from 'routes'
 
 function SideMenu ({ authUser, logout, open, handleDrawerOpen }) {
+  const [currentPage, setCurrentPage] = useState('shop')
+
+  function handleCurrentPage (value) {
+    setCurrentPage(value)
+  }
+
   return (
     <Drawer
       open={open}
@@ -52,13 +58,13 @@ function SideMenu ({ authUser, logout, open, handleDrawerOpen }) {
               {[
                 {
                   value: 'account',
-                  component: NavLink,
+                  component: Link,
                   to: PERFIL,
                   children: <AccountCircle fontSize='small' />
                 },
                 {
                   value: 'manager',
-                  component: NavLink,
+                  component: Link,
                   to: MANAGER,
                   children: <SettingsIcon fontSize='small' />
                 },
@@ -71,7 +77,14 @@ function SideMenu ({ authUser, logout, open, handleDrawerOpen }) {
                 <IconButton
                   {...button}
                   key={button.value}
-                  onClick={() => button.onClick && button.onClick()}
+                  selected={(currentPage === button.value)}
+                  onClick={() => {
+                    if (button.onClick) {
+                      button.onClick()
+                    } else {
+                      handleCurrentPage(button.value)
+                    }
+                  }}
                 >
                   {button.children}
                 </IconButton>
@@ -101,6 +114,10 @@ function SideMenu ({ authUser, logout, open, handleDrawerOpen }) {
             <LinkMenu
               {...component}
               key={component.value}
+              selected={(currentPage === component.value)}
+              onClick={() => {
+                handleCurrentPage(component.value)
+              }}
             >
               {component.children}
             </LinkMenu>
@@ -112,10 +129,10 @@ function SideMenu ({ authUser, logout, open, handleDrawerOpen }) {
 }
 
 SideMenu.propTypes = {
-  authUser: PropTypes.object.isRequired,
-  logout: PropTypes.func.isRequired,
-  open: PropTypes.bool.isRequired,
-  handleDrawerOpen: PropTypes.func.isRequired
+  authUser: t.object.isRequired,
+  logout: t.func.isRequired,
+  open: t.bool.isRequired,
+  handleDrawerOpen: t.func.isRequired
 }
 
 const ToggleButton = styled.div`
@@ -171,7 +188,17 @@ const UserName = styled(Grid).attrs({
 
 const IconButton = styled(MaterialIconButton)`
   && {
+    color: ${({ selected, theme }) => (selected
+    ? theme.palette.primary.light
+    : theme.palette.common.white
+    )};
+    transform: ${({ selected }) => (selected ? 'scale(1.2)' : 'scale(1.0)')};
+    transition: 500ms;
 
+    :hover {
+      color: ${({ theme }) => theme.palette.primary.light};
+      transform: scale(1.2);
+    }
   }
 `
 
@@ -187,15 +214,7 @@ const MenuLinksContainer = styled(Grid).attrs({
 
 function LinkMenu ({ children, ...props }) {
   return (
-    <LinkItem
-      {...props}
-      isActive={(match, location) => {
-        if (!match) {
-          return false
-        }
-        return match.isExact && match.path && location.pathname
-      }}
-    >
+    <LinkItem {...props}>
       <Grid item>
         <Typography variant='h5'>
           {children}
@@ -206,28 +225,26 @@ function LinkMenu ({ children, ...props }) {
 }
 
 LinkMenu.propTypes = {
-  children: PropTypes.node
+  children: t.node
 }
 
-const activeClassName = 'nav-item-active'
-
-const LinkItem = styled(NavLink).attrs({ activeClassName })`
+const LinkItem = styled(Link)`
   && {
-    color: ${({ theme }) => theme.palette.common.white};
+    color: ${({ selected, theme }) => (selected
+    ? theme.palette.primary.light
+    : theme.palette.common.white
+  )};
     margin: auto;
     text-align: center;
     text-decoration: none;
     transition: 500ms;
+    transform: ${({ selected }) => (selected ? 'scale(1.1)' : 'scale(1.0)')};
     width: 100%;
 
     :hover {
       color: ${({ theme }) => theme.palette.primary.light};
       transform: scale(1.1);
     }
-  }
-
-  &.${activeClassName} {
-    color: ${({ theme }) => theme.palette.primary.light};
   }
 `
 

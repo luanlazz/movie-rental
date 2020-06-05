@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { connect } from 'react-redux'
@@ -18,7 +18,7 @@ import ButtonHandle from 'components/button'
 import { NavLinkHandle } from 'components'
 
 function SignIn ({ authUser, onSubmit, validateToken, setFetching, openSnackbarSignin }) {
-  const formRef = React.useRef(null)
+  const formRef = useRef(null)
 
   useEffect(() => {
     const validate = async () => {
@@ -77,10 +77,6 @@ function SignIn ({ authUser, onSubmit, validateToken, setFetching, openSnackbarS
     if (formRef.current) formRef.current.submitForm()
   }
 
-  // const resetFormRemotely = () => {
-  //   if (formRef.current) formRef.current.resetForm()
-  // }
-
   return (
     <>
       <Grid container alignItems='center'>
@@ -94,15 +90,15 @@ function SignIn ({ authUser, onSubmit, validateToken, setFetching, openSnackbarS
       </Grid>
 
       <FormikHelper
+        innerRef={formRef}
         initialValues={initialValues}
         validation={validation}
         submit={async values => await handleSubmitForm(values)}
         fields={fields}
         page='signin'
-        innerRef={formRef}
       />
 
-      <Grid container alignItems='center'>
+      <GridActionsPage>
         {authUser.fetching && <CircularProgress />}
         <ButtonHandle
           onClick={submitFormRemotely}
@@ -122,7 +118,7 @@ function SignIn ({ authUser, onSubmit, validateToken, setFetching, openSnackbarS
             Registrar
           </NavLinkHandle>
         </ButtonHandle>
-      </Grid>
+      </GridActionsPage>
 
       <Grid container>
         <Button variant='text'>
@@ -142,6 +138,14 @@ SignIn.propTypes = {
   setFetching: PropTypes.func.isRequired,
   openSnackbarSignin: PropTypes.func.isRequired
 }
+
+const GridActionsPage = styled(Grid).attrs({
+  container: true
+})`
+  && {
+    padding-bottom: ${({ theme }) => theme.spacing(3)}px;
+  }
+`
 
 const ButtonsText = styled(Typography)`
   && {

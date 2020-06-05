@@ -18,6 +18,8 @@ module.exports = {
     if (req.params.id) {
       user.userId = req.params.id
       delete user.password
+    } else {
+      delete user.admin
     }
 
     try {

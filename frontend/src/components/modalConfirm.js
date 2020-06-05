@@ -45,7 +45,7 @@ function ModalConfirm ({ openUserConfirm, handleCloseUserConfirm, handleConfirmD
       >
         <Fade in={openUserConfirm}>
           <Paper className={classes.paper}>
-            <H4>Gostaria de confirma a exclusão do usuário?</H4>
+            <H4>Confirma a exclusão do usuário?</H4>
 
             <GridButtons>
               <GridButton item xs={6}>
@@ -59,7 +59,7 @@ function ModalConfirm ({ openUserConfirm, handleCloseUserConfirm, handleConfirmD
                 </ButtonHandle>
               </GridButton>
 
-              <GridButton item xs={6}>
+              <GridButton item>
                 {fetching && <CircularProgress />}
                 <ButtonHandle
                   variant='contained'
@@ -90,7 +90,6 @@ const GridButtons = styled(Grid).attrs({
 })`
   && {
     display: inline-flex;
-    align-items: center;
     justify-content: space-around;
   }
 `
